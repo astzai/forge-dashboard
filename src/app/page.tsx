@@ -75,11 +75,11 @@ function Header() {
 }
 
 /* ============================================================
-   HERO with layered floating mockups (tight composition)
+   HERO — title + dashboard mockup with floaters poking out
    ============================================================ */
 function Hero() {
   return (
-    <section className="relative pt-12 md:pt-16 pb-16 md:pb-20">
+    <section className="relative pt-10 md:pt-14 pb-16 md:pb-20">
       <div className="absolute inset-0 bg-mesh pointer-events-none opacity-80" />
       <div className="absolute inset-0 bg-grid pointer-events-none" />
 
@@ -92,14 +92,14 @@ function Hero() {
             </div>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tightest leading-[0.9] mb-6">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tightest leading-[0.9] mb-5">
               Train. Eet.
               <br />
               <span className="text-gradient-orange">Verbeter.</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto mb-7 leading-relaxed">
               Eén dashboard voor je hele journey. AI coach die je profiel kent
               en elke dag zegt wat je morgen moet doen.
             </p>
@@ -116,13 +116,14 @@ function Hero() {
           </Reveal>
         </div>
 
-        {/* Layered floating mockups — tight diagonal composition */}
+        {/* Mockup composition — dashboard centraal in normale flow,
+            chat + daglog floaters overlappen de hoeken (alsof ze eruit poppen) */}
         <Reveal delay={400}>
-          <div className="relative mt-10 md:mt-14 max-w-4xl mx-auto h-[420px] sm:h-[460px] md:h-[500px]">
-            <div className="absolute inset-0 bg-glow-orange opacity-50 pointer-events-none" />
+          <div className="relative mt-10 md:mt-14 max-w-3xl mx-auto">
+            <div className="absolute -inset-12 bg-glow-orange opacity-60 pointer-events-none" />
 
-            {/* CENTRAL — Dashboard mockup (hero) */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[88%] sm:w-[78%] md:w-[72%] z-20 float-y">
+            {/* DASHBOARD — main mockup, normal flow */}
+            <div className="relative z-20 float-y">
               <TiltCard className="rounded-2xl" intensity={3}>
                 <div className="rounded-2xl border border-white/10 bg-stone-950/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
                   <div className="border-b border-white/5 px-4 py-2.5 flex items-center gap-2">
@@ -140,16 +141,16 @@ function Hero() {
               </TiltCard>
             </div>
 
-            {/* TOP-LEFT FLOATER — Coach chat (closer + overlapping central) */}
-            <div className="hidden sm:block absolute left-[2%] top-[8%] w-[200px] md:w-[240px] z-30 float-y-delay">
-              <TiltCard className="rounded-2xl" intensity={5}>
+            {/* CHAT MINI — pops out of top-left corner */}
+            <div className="hidden md:block absolute -top-6 -left-12 lg:-left-20 w-[210px] z-30 float-y-delay">
+              <TiltCard className="rounded-2xl" intensity={6}>
                 <ChatMini />
               </TiltCard>
             </div>
 
-            {/* BOTTOM-RIGHT FLOATER — Daglog feedback (closer + overlapping central) */}
-            <div className="hidden sm:block absolute right-[2%] bottom-[8%] w-[200px] md:w-[240px] z-30 float-y-delay-2">
-              <TiltCard className="rounded-2xl" intensity={5}>
+            {/* LOG MINI — pops out of bottom-right corner */}
+            <div className="hidden md:block absolute -bottom-6 -right-12 lg:-right-20 w-[210px] z-30 float-y-delay-2">
+              <TiltCard className="rounded-2xl" intensity={6}>
                 <LogMini />
               </TiltCard>
             </div>
