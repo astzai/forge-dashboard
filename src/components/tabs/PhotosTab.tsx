@@ -220,7 +220,7 @@ export function PhotosTab({ profile }: { profile: Profile }) {
                 <input
                   id={`photo-input-${angle}`}
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   className="hidden"
                   onChange={(e) =>
                     setFiles((f) => ({

@@ -1,16 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  background: #0c0a09;
-  color: #e7e5e4;
+:root {
+  --bg: #0a0908;
+  --bg-elev: #14110f;
+  --bg-elev-2: #1c1917;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --orange: #f97316;
+  --orange-glow: rgba(249, 115, 22, 0.5);
+  --lime: #84cc16;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  color: #f5f5f4;
   font-family: "Inter", system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.55;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -18,30 +30,105 @@ body {
 
 h1, h2, h3, h4 {
   font-family: "Inter", system-ui, sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  font-weight: 700;
 }
 
-/* Hide spin buttons on number inputs */
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='number'] {
-  -moz-appearance: textfield;
-}
+input[type='number'] { -moz-appearance: textfield; }
 
-/* A reusable label class for the small uppercase tracking labels we use a lot */
+/* Reusable utility classes */
 .label {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #78716c;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-/* Numbers — keep monospace look for stat cards */
 .num {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
+
+/* Hero number — big, dramatic */
+.hero-num {
+  font-family: "Inter", system-ui, sans-serif;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+  line-height: 0.9;
+}
+
+/* Glowy orange button */
+.btn-primary {
+  background: var(--orange);
+  color: #0a0908;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+.btn-primary:hover {
+  background: #fb923c;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+}
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Card surface */
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* Safe area for bottom nav on iPhone */
+.pb-safe {
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Hide scrollbar utility for nav */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Subtle pulse for live indicators */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* Glow ring on hover */
+.glow-orange:hover {
+  box-shadow: 0 0 24px rgba(249, 115, 22, 0.25);
+}
+
+/* Subtle grid background pattern */
+.bg-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Radial glow used in heroes */
+.bg-glow {
+  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.18), transparent 60%);
+}
+
+/* Text gradient utility */
+.text-gradient {
+  background: linear-gradient(180deg, #fafaf9 0%, #a8a29e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Make whole app feel like an app on mobile (no tap highlight, prevent overscroll bounce on inputs) */
+* { -webkit-tap-highlight-color: transparent; }
