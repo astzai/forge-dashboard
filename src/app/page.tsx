@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   Activity,
   Brain,
@@ -18,17 +19,28 @@ import {
   TiltCard,
   Typewriter,
 } from "@/components/landing/interactions";
+import {
+  DEFAULT_CONTENT,
+  fetchSiteContent,
+  type SiteContent,
+} from "@/lib/content";
 
 export default function LandingPage() {
+  const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
+
+  useEffect(() => {
+    fetchSiteContent().then(setContent).catch(() => {});
+  }, []);
+
   return (
     <main className="min-h-screen bg-[var(--bg)] text-stone-100 overflow-x-hidden relative">
       <CursorGlow />
       <Header />
-      <Hero />
-      <Coach />
-      <FeaturesGrid />
-      <Pricing />
-      <CTA />
+      <Hero content={content} />
+      <Coach content={content.coach} />
+      <FeaturesGrid content={content.features} />
+      <Pricing content={content.pricing} />
+      <CTA content={content.cta} />
       <Footer />
     </main>
   );
@@ -75,9 +87,9 @@ function Header() {
 }
 
 /* ============================================================
-   HERO — title + dashboard mockup with floaters poking out
+   HERO
    ============================================================ */
-function Hero() {
+function Hero({ content }: { content: SiteContent }) {
   return (
     <section className="relative pt-10 md:pt-14 pb-16 md:pb-20">
       <div className="absolute inset-0 bg-mesh pointer-events-none opacity-80" />
@@ -88,41 +100,38 @@ function Hero() {
           <Reveal>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur text-xs text-orange-200 font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500 pulse-soft" />
-              Coach in je broekzak — €2/mo
+              {content.hero.badge}
             </div>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tightest leading-[0.9] mb-5">
-              Train. Eet.
+              {content.hero.title_line1}
               <br />
-              <span className="text-gradient-orange">Verbeter.</span>
+              <span className="text-gradient-orange">
+                {content.hero.title_line2_gradient}
+              </span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto mb-7 leading-relaxed">
-              Eén dashboard voor je hele journey. AI coach die je profiel kent
-              en elke dag zegt wat je morgen moet doen.
+              {content.hero.subtitle}
             </p>
           </Reveal>
           <Reveal delay={240}>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link href="/register" className="btn-primary text-base px-8 py-4">
-                Start je traject →
+                {content.hero.primary_cta}
               </Link>
               <a href="#coach" className="btn-ghost text-base px-8 py-4">
-                Zie de coach
+                {content.hero.secondary_cta}
               </a>
             </div>
           </Reveal>
         </div>
 
-        {/* Mockup composition — dashboard centraal in normale flow,
-            chat + daglog floaters overlappen de hoeken (alsof ze eruit poppen) */}
         <Reveal delay={400}>
           <div className="relative mt-10 md:mt-14 max-w-3xl mx-auto">
             <div className="absolute -inset-12 bg-glow-orange opacity-60 pointer-events-none" />
-
-            {/* DASHBOARD — main mockup, normal flow */}
             <div className="relative z-20 float-y">
               <TiltCard className="rounded-2xl" intensity={3}>
                 <div className="rounded-2xl border border-white/10 bg-stone-950/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
@@ -132,26 +141,26 @@ function Hero() {
                       <div className="w-2 h-2 rounded-full bg-stone-700" />
                       <div className="w-2 h-2 rounded-full bg-stone-700" />
                     </div>
-                    <div className="text-[10px] text-stone-500 ml-2">forge — Dashboard</div>
+                    <div className="text-[10px] text-stone-500 ml-2">
+                      forge — Dashboard
+                    </div>
                   </div>
                   <div className="p-4 md:p-5">
-                    <DashboardPreview />
+                    <DashboardPreview content={content.hero_dashboard} />
                   </div>
                 </div>
               </TiltCard>
             </div>
 
-            {/* CHAT MINI — pops out of top-left corner */}
             <div className="hidden md:block absolute -top-6 -left-12 lg:-left-20 w-[210px] z-30 float-y-delay">
               <TiltCard className="rounded-2xl" intensity={6}>
-                <ChatMini />
+                <ChatMini content={content.hero_chat} />
               </TiltCard>
             </div>
 
-            {/* LOG MINI — pops out of bottom-right corner */}
             <div className="hidden md:block absolute -bottom-6 -right-12 lg:-right-20 w-[210px] z-30 float-y-delay-2">
               <TiltCard className="rounded-2xl" intensity={6}>
-                <LogMini />
+                <LogMini content={content.hero_log} />
               </TiltCard>
             </div>
           </div>
@@ -161,62 +170,7 @@ function Hero() {
   );
 }
 
-function ChatMini() {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
-      <div className="border-b border-white/5 px-3 py-2 flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-soft" />
-        <span className="text-[10px] text-stone-400 font-medium">AI Coach</span>
-      </div>
-      <div className="p-3 space-y-2">
-        <div className="bg-orange-500 text-stone-950 rounded-xl rounded-tr-sm px-2.5 py-1.5 text-[11px] font-medium ml-6">
-          <Typewriter text="Wat eet ik vandaag?" speedMs={28} />
-        </div>
-        <div className="bg-stone-900 border border-white/5 rounded-xl rounded-tl-sm px-2.5 py-1.5 text-[11px] leading-snug text-stone-200">
-          <Typewriter
-            text="Cut-doel: 2400 kcal, 200g eiwit. Vandaag rest, dus 50g minder carbs."
-            speedMs={16}
-            startDelayMs={1200}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LogMini() {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
-      <div className="border-b border-white/5 px-3 py-2 flex items-center justify-between">
-        <span className="text-[10px] text-stone-400 font-medium">Dag-feedback</span>
-        <div className="w-7 h-7 rounded-md bg-orange-500/10 border border-orange-500/40 flex items-center justify-center">
-          <span className="hero-num text-xs text-orange-400">
-            <CountUp to={8} duration={900} />
-          </span>
-        </div>
-      </div>
-      <div className="p-3 space-y-1.5 text-[11px]">
-        {[
-          { l: "Voeding", s: 8, c: "text-emerald-400" },
-          { l: "Training", s: 9, c: "text-emerald-400" },
-          { l: "Herstel", s: 6, c: "text-orange-400" },
-        ].map((r, i) => (
-          <div key={r.l} className="flex items-center justify-between">
-            <span className="text-stone-400">{r.l}</span>
-            <span className={`hero-num ${r.c}`}>
-              <CountUp to={r.s} duration={800 + i * 150} />
-            </span>
-          </div>
-        ))}
-        <div className="border-l-2 border-orange-500 pl-2 text-stone-300 text-[10px] mt-2 leading-snug">
-          → 1L meer water morgen
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DashboardPreview() {
+function DashboardPreview({ content }: { content: SiteContent["hero_dashboard"] }) {
   return (
     <div className="space-y-4 rise-in">
       <div className="bg-gradient-to-br from-orange-500/15 to-transparent border border-orange-500/20 rounded-xl p-5 md:p-6 relative overflow-hidden">
@@ -225,23 +179,54 @@ function DashboardPreview() {
           <div className="flex items-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 pulse-soft" />
             <span className="text-[11px] uppercase tracking-wider text-orange-300 font-semibold">
-              Maandag · 5 mei
+              {content.day_label}
             </span>
           </div>
           <h3 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-1">
-            Push Day
+            {content.workout_title}
           </h3>
-          <p className="text-sm text-stone-400">
-            Bench Press 4×8 · Incline DB 3×10 · Shoulder Press 3×10
-          </p>
+          <p className="text-sm text-stone-400">{content.workout_subtitle}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-        <PreviewStat label="Gewicht" value={<><CountUp to={98.2} decimals={1} /><span className="text-xs text-stone-500 ml-1">kg</span></>} sub={<span className="text-emerald-400 num">−<CountUp to={1.2} decimals={1} />kg</span>} />
-        <PreviewStat label="Stappen" value={<><CountUp to={8400} /></>} />
-        <PreviewStat label="Kcal" value={<CountUp to={2140} />} />
-        <PreviewStat label="Eiwit" value={<><CountUp to={186} /><span className="text-xs text-stone-500 ml-1">g</span></>} />
+        <PreviewStat
+          label="Gewicht"
+          value={
+            <>
+              <CountUp to={content.weight_kg} decimals={1} />
+              <span className="text-xs text-stone-500 ml-1">kg</span>
+            </>
+          }
+          sub={
+            content.weight_delta !== 0 && (
+              <span
+                className={`num ${content.weight_delta < 0 ? "text-emerald-400" : "text-orange-400"}`}
+              >
+                {content.weight_delta > 0 ? "+" : "−"}
+                <CountUp
+                  to={Math.abs(content.weight_delta)}
+                  decimals={1}
+                />
+                kg
+              </span>
+            )
+          }
+        />
+        <PreviewStat
+          label="Stappen"
+          value={<CountUp to={content.steps} />}
+        />
+        <PreviewStat label="Kcal" value={<CountUp to={content.kcal} />} />
+        <PreviewStat
+          label="Eiwit"
+          value={
+            <>
+              <CountUp to={content.protein} />
+              <span className="text-xs text-stone-500 ml-1">g</span>
+            </>
+          }
+        />
       </div>
 
       <div className="bg-stone-900/60 border border-white/5 rounded-xl p-4 h-28 md:h-32 relative">
@@ -280,12 +265,72 @@ function PreviewStat({
   );
 }
 
-/* (CoachPreview & LogPreview removed — replaced by ChatMini & LogMini in Hero) */
+function ChatMini({ content }: { content: SiteContent["hero_chat"] }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="border-b border-white/5 px-3 py-2 flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-soft" />
+        <span className="text-[10px] text-stone-400 font-medium">AI Coach</span>
+      </div>
+      <div className="p-3 space-y-2">
+        <div className="bg-orange-500 text-stone-950 rounded-xl rounded-tr-sm px-2.5 py-1.5 text-[11px] font-medium ml-6">
+          <Typewriter text={content.user_message} speedMs={28} />
+        </div>
+        <div className="bg-stone-900 border border-white/5 rounded-xl rounded-tl-sm px-2.5 py-1.5 text-[11px] leading-snug text-stone-200">
+          <Typewriter
+            text={content.ai_message}
+            speedMs={16}
+            startDelayMs={1200}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LogMini({ content }: { content: SiteContent["hero_log"] }) {
+  const metrics = [
+    { l: content.metric1_label, s: content.metric1_score, c: scoreColor(content.metric1_score) },
+    { l: content.metric2_label, s: content.metric2_score, c: scoreColor(content.metric2_score) },
+    { l: content.metric3_label, s: content.metric3_score, c: scoreColor(content.metric3_score) },
+  ];
+  return (
+    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="border-b border-white/5 px-3 py-2 flex items-center justify-between">
+        <span className="text-[10px] text-stone-400 font-medium">Dag-feedback</span>
+        <div className="w-7 h-7 rounded-md bg-orange-500/10 border border-orange-500/40 flex items-center justify-center">
+          <span className="hero-num text-xs text-orange-400">
+            <CountUp to={content.score} duration={900} />
+          </span>
+        </div>
+      </div>
+      <div className="p-3 space-y-1.5 text-[11px]">
+        {metrics.map((r, i) => (
+          <div key={r.l + i} className="flex items-center justify-between">
+            <span className="text-stone-400">{r.l}</span>
+            <span className={`hero-num ${r.c}`}>
+              <CountUp to={r.s} duration={800 + i * 150} />
+            </span>
+          </div>
+        ))}
+        <div className="border-l-2 border-orange-500 pl-2 text-stone-300 text-[10px] mt-2 leading-snug">
+          → {content.tomorrow_tip}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function scoreColor(score: number) {
+  if (score >= 8) return "text-emerald-400";
+  if (score >= 5) return "text-orange-400";
+  return "text-red-400";
+}
 
 /* ============================================================
-   COACH section (showcase + counts)
+   COACH section
    ============================================================ */
-function Coach() {
+function Coach({ content }: { content: SiteContent["coach"] }) {
   return (
     <section
       id="coach"
@@ -297,44 +342,44 @@ function Coach() {
           <Reveal>
             <div>
               <div className="text-xs uppercase tracking-[0.2em] text-orange-400 mb-3 font-semibold flex items-center gap-2">
-                <Brain size={14} /> AI Coach
+                <Brain size={14} /> {content.eyebrow}
               </div>
               <h2 className="text-4xl md:text-6xl font-extrabold tracking-tightest leading-[0.95] mb-6">
-                Een coach die <span className="text-gradient-orange">jou</span>{" "}
-                kent.
+                {content.title_part1}
+                <span className="text-gradient-orange">{content.title_gradient}</span>
+                {content.title_part2}
               </h2>
               <p className="text-lg text-stone-400 mb-8 leading-relaxed">
-                Niet zomaar een chatbot. FORGE's coach wordt gevoed met je hele
-                profiel. Antwoord altijd in jouw context.
+                {content.subtitle}
               </p>
               <div className="grid grid-cols-2 gap-5">
                 <CountStat
-                  to={4}
-                  label="Coach-stijlen"
-                  sub="Streng / motiverend / educatief / chill"
+                  to={content.stat1_value}
+                  label={content.stat1_label}
+                  sub={content.stat1_sub}
                 />
                 <CountStat
-                  to={20}
-                  prefix="+"
-                  label="Profielvelden"
-                  sub="Lichaam, dieet, training, slaap..."
+                  to={content.stat2_value}
+                  prefix={content.stat2_prefix}
+                  label={content.stat2_label}
+                  sub={content.stat2_sub}
                 />
                 <CountStat
-                  to={7}
-                  label="Dagen geheugen"
-                  sub="Trend-context bij elk antwoord"
+                  to={content.stat3_value}
+                  label={content.stat3_label}
+                  sub={content.stat3_sub}
                 />
                 <CountStat
-                  to={100}
-                  suffix="%"
-                  label="Privé"
-                  sub="Jouw key, jouw data, alleen jij"
+                  to={content.stat4_value}
+                  suffix={content.stat4_suffix}
+                  label={content.stat4_label}
+                  sub={content.stat4_sub}
                 />
               </div>
             </div>
           </Reveal>
           <Reveal delay={150}>
-            <CoachChatBig />
+            <CoachChatBig content={content} />
           </Reveal>
         </div>
       </div>
@@ -366,7 +411,7 @@ function CountStat({
   );
 }
 
-function CoachChatBig() {
+function CoachChatBig({ content }: { content: SiteContent["coach"] }) {
   return (
     <div className="card p-6 shadow-2xl shadow-orange-500/10 glow-pulse">
       <div className="flex items-center gap-2 pb-3 border-b border-white/5 mb-4">
@@ -377,24 +422,21 @@ function CoachChatBig() {
       </div>
       <div className="space-y-3">
         <div className="bg-orange-500 text-stone-950 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm font-medium ml-10">
-          <Typewriter text="Hoe ga ik mijn cut beter aanpakken?" />
+          <Typewriter text={content.chat_user1} />
         </div>
         <div className="bg-stone-900 border border-white/5 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-stone-200 mr-10 leading-relaxed">
           <Typewriter
-            text="Je weegt 98.2 richting 92 in 16 weken — 0.4kg/week. Realistisch. Drie dingen: 1) Eiwit naar 200g (nu 186 gem) 2) Stappen naar 8k op rustdagen 3) Bewaar Monster Zero voor pre-workout."
+            text={content.chat_ai1}
             speedMs={14}
             startDelayMs={1700}
           />
         </div>
         <div className="bg-orange-500 text-stone-950 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm font-medium ml-10">
-          <Typewriter
-            text="En mijn slaap?"
-            startDelayMs={7500}
-          />
+          <Typewriter text={content.chat_user2} startDelayMs={7500} />
         </div>
         <div className="bg-stone-900 border border-white/5 rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-stone-200 mr-10 leading-relaxed">
           <Typewriter
-            text="Je 7u is OK maar stress is hoog. Probeer 1 week: laatste maaltijd 3u voor bed, geen scherm 30 min ervoor, kamer onder 18°."
+            text={content.chat_ai2}
             speedMs={14}
             startDelayMs={9000}
           />
@@ -405,22 +447,20 @@ function CoachChatBig() {
 }
 
 /* ============================================================
-   FEATURES — 4 bento cards (simpler than before)
+   FEATURES
    ============================================================ */
-function FeaturesGrid() {
+function FeaturesGrid({ content }: { content: SiteContent["features"] }) {
   return (
-    <section
-      id="features"
-      className="py-20 md:py-32 border-t border-white/5"
-    >
+    <section id="features" className="py-20 md:py-32 border-t border-white/5">
       <div className="max-w-6xl mx-auto px-4 md:px-6">
         <Reveal>
           <div className="text-center max-w-2xl mx-auto mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-orange-400 mb-3 font-semibold">
-              Alles in één
+              {content.eyebrow}
             </div>
             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tightest leading-[1.05]">
-              Eén app. <span className="text-gradient-mute">Volledige controle.</span>
+              {content.title_part1}
+              <span className="text-gradient-mute">{content.title_part2}</span>
             </h2>
           </div>
         </Reveal>
@@ -431,10 +471,8 @@ function FeaturesGrid() {
               <div className="card p-6 h-full md:h-[280px] relative overflow-hidden card-hover bg-gradient-to-br from-orange-500/5 to-transparent">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 blur-3xl rounded-full" />
                 <Activity className="text-orange-400 mb-3" size={24} />
-                <h3 className="font-bold text-lg mb-1.5">Live dashboard</h3>
-                <p className="text-sm text-stone-400 mb-4">
-                  Hero-metrics, trends, voortgang. Update bij elke log.
-                </p>
+                <h3 className="font-bold text-lg mb-1.5">{content.card1_title}</h3>
+                <p className="text-sm text-stone-400 mb-4">{content.card1_desc}</p>
                 <div className="hero-num text-4xl md:text-5xl text-stone-100">
                   <CountUp to={98.2} decimals={1} />
                   <span className="text-lg text-stone-500 ml-1">kg</span>
@@ -447,10 +485,8 @@ function FeaturesGrid() {
             <TiltCard className="rounded-2xl">
               <div className="card p-6 h-full md:h-[280px] relative overflow-hidden card-hover bg-gradient-to-br from-pink-500/5 to-transparent">
                 <Camera className="text-pink-400 mb-3" size={24} />
-                <h3 className="font-bold text-lg mb-1.5">Foto check-ins</h3>
-                <p className="text-sm text-stone-400 mb-4">
-                  3 hoeken per week, AI vergelijkt en wijst veranderingen aan.
-                </p>
+                <h3 className="font-bold text-lg mb-1.5">{content.card2_title}</h3>
+                <p className="text-sm text-stone-400 mb-4">{content.card2_desc}</p>
                 <div className="grid grid-cols-3 gap-1.5 mt-2">
                   {[0, 1, 2].map((i) => (
                     <div
@@ -467,10 +503,8 @@ function FeaturesGrid() {
             <TiltCard className="rounded-2xl">
               <div className="card p-6 h-full md:h-[280px] relative overflow-hidden card-hover bg-gradient-to-br from-lime-500/5 to-transparent">
                 <Sparkles className="text-lime-400 mb-3" size={24} />
-                <h3 className="font-bold text-lg mb-1.5">Voedingsanalyse</h3>
-                <p className="text-sm text-stone-400 mb-4">
-                  Type wat je at, AI rekent kcal en macros uit.
-                </p>
+                <h3 className="font-bold text-lg mb-1.5">{content.card3_title}</h3>
+                <p className="text-sm text-stone-400 mb-4">{content.card3_desc}</p>
                 <div className="space-y-1.5">
                   {[
                     { l: "Eiwit", v: 80, c: "bg-orange-500" },
@@ -498,12 +532,8 @@ function FeaturesGrid() {
             <TiltCard className="rounded-2xl md:col-span-2">
               <div className="card p-6 h-full relative overflow-hidden card-hover bg-gradient-to-br from-amber-500/5 to-transparent">
                 <Flame className="text-amber-400 mb-3" size={24} />
-                <h3 className="font-bold text-lg mb-1.5">
-                  Wekelijks coach-rapport
-                </h3>
-                <p className="text-sm text-stone-400 mb-4">
-                  Wat ging goed, wat niet, focus voor volgende week.
-                </p>
+                <h3 className="font-bold text-lg mb-1.5">{content.card4_title}</h3>
+                <p className="text-sm text-stone-400 mb-4">{content.card4_desc}</p>
                 <div className="grid grid-cols-3 gap-2 max-w-md">
                   <RapportStat label="Sport" v={5} suffix="×" />
                   <RapportStat label="Cal/dag" v={2180} />
@@ -517,10 +547,8 @@ function FeaturesGrid() {
             <TiltCard className="rounded-2xl">
               <div className="card p-6 h-full md:h-[260px] relative overflow-hidden card-hover bg-gradient-to-br from-cyan-500/5 to-transparent">
                 <Dumbbell className="text-cyan-400 mb-3" size={24} />
-                <h3 className="font-bold text-lg mb-1.5">Training­schema</h3>
-                <p className="text-sm text-stone-400 mb-3">
-                  Per dag wat je traint. Werkt op je telefoon in de gym.
-                </p>
+                <h3 className="font-bold text-lg mb-1.5">{content.card5_title}</h3>
+                <p className="text-sm text-stone-400 mb-3">{content.card5_desc}</p>
                 <div className="space-y-1">
                   {["MA · Push", "DI · Pull", "WO · Legs"].map((d) => (
                     <div
@@ -562,7 +590,16 @@ function RapportStat({
 /* ============================================================
    PRICING
    ============================================================ */
-function Pricing() {
+function Pricing({ content }: { content: SiteContent["pricing"] }) {
+  const features = [
+    content.feature1,
+    content.feature2,
+    content.feature3,
+    content.feature4,
+    content.feature5,
+    content.feature6,
+  ].filter(Boolean);
+
   return (
     <section
       id="pricing"
@@ -573,13 +610,14 @@ function Pricing() {
         <Reveal>
           <div className="text-center mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-orange-400 mb-3 font-semibold">
-              Prijs
+              {content.eyebrow}
             </div>
             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tightest leading-[1.05]">
-              Twee euro <span className="text-gradient-mute">per maand.</span>
+              {content.title_part1}
+              <span className="text-gradient-mute">{content.title_part2}</span>
             </h2>
             <p className="text-lg text-stone-400 mt-4 max-w-xl mx-auto">
-              Genoeg om hosting + AI te dekken. Niet meer.
+              {content.subtitle}
             </p>
           </div>
         </Reveal>
@@ -589,33 +627,24 @@ function Pricing() {
             <TiltCard className="rounded-2xl" intensity={5}>
               <div className="card relative overflow-hidden p-8 glow-pulse">
                 <div className="absolute -top-px -right-px px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 text-stone-950 text-xs font-bold rounded-bl-lg rounded-tr-[14px]">
-                  EARLY ACCESS
+                  {content.badge}
                 </div>
                 <div className="text-sm text-stone-400 mb-2 font-medium">
-                  FORGE Pro
+                  {content.plan_name}
                 </div>
                 <div className="flex items-baseline gap-1 mb-6">
                   <span className="hero-num text-7xl text-gradient-orange">
-                    €<CountUp to={2} duration={1000} />
+                    {content.price}
                   </span>
-                  <span className="text-stone-500 ml-1">/ maand</span>
+                  <span className="text-stone-500 ml-1">{content.period}</span>
                 </div>
                 <ul className="space-y-3 mb-8 text-sm">
-                  {[
-                    "Unlimited daily logs + AI feedback",
-                    "Wekelijkse foto check-ins (3 hoeken)",
-                    "Persoonlijke AI coach met jouw key",
-                    "Wekelijkse coach-rapporten",
-                    "Dashboard met 10+ tabs",
-                    "100% privé per gebruiker (RLS)",
-                  ].map((b) => (
+                  {features.map((b) => (
                     <li
                       key={b}
                       className="flex items-start gap-2.5 text-stone-300"
                     >
-                      <span className="text-emerald-400 mt-0.5 font-bold">
-                        ✓
-                      </span>
+                      <span className="text-emerald-400 mt-0.5 font-bold">✓</span>
                       <span>{b}</span>
                     </li>
                   ))}
@@ -624,10 +653,10 @@ function Pricing() {
                   href="/register"
                   className="block text-center btn-primary w-full text-base py-3.5"
                 >
-                  Start nu gratis
+                  {content.cta}
                 </Link>
                 <p className="text-xs text-stone-500 mt-3 text-center">
-                  Tijdens early-access gratis. Stripe komt later.
+                  {content.small_text}
                 </p>
               </div>
             </TiltCard>
@@ -641,7 +670,7 @@ function Pricing() {
 /* ============================================================
    FINAL CTA
    ============================================================ */
-function CTA() {
+function CTA({ content }: { content: SiteContent["cta"] }) {
   return (
     <section className="py-24 md:py-40 border-t border-white/5 relative overflow-hidden">
       <div className="absolute inset-0 bg-mesh pointer-events-none" />
@@ -649,18 +678,18 @@ function CTA() {
       <div className="relative max-w-3xl mx-auto px-4 md:px-6 text-center">
         <Reveal>
           <h2 className="text-5xl md:text-8xl font-extrabold tracking-tightest leading-[0.95] mb-6">
-            Tijd om <span className="text-gradient-orange">te starten.</span>
+            {content.title_part1}
+            <span className="text-gradient-orange">{content.title_gradient}</span>
           </h2>
         </Reveal>
         <Reveal delay={120}>
           <p className="text-lg text-stone-400 mb-10 max-w-xl mx-auto">
-            Account in 10 seconden. Onboarding in 3 minuten. Eerste
-            dag-feedback vanavond.
+            {content.subtitle}
           </p>
         </Reveal>
         <Reveal delay={240}>
           <Link href="/register" className="btn-primary text-lg px-10 py-5">
-            Start je traject →
+            {content.button}
           </Link>
         </Reveal>
       </div>

@@ -518,7 +518,17 @@ export default function SettingsPage() {
           <h2 className="text-base font-semibold text-stone-100 mb-4">
             Account
           </h2>
-          <SecondaryButton onClick={signOut}>Uitloggen</SecondaryButton>
+          <div className="flex flex-wrap gap-2">
+            <SecondaryButton onClick={signOut}>Uitloggen</SecondaryButton>
+            {profile && (
+              <Link
+                href="/admin"
+                className="border border-stone-800 hover:border-orange-500/60 text-stone-300 px-5 py-3 rounded-md text-sm transition-colors"
+              >
+                Site admin →
+              </Link>
+            )}
+          </div>
         </div>
       </section>
     </main>
