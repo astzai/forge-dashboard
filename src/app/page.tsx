@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   Activity,
   Brain,
   Camera,
-  ClipboardCheck,
   Dumbbell,
   Flame,
-  MessageSquare,
   Sparkles,
   Zap,
 } from "lucide-react";
@@ -78,35 +75,31 @@ function Header() {
 }
 
 /* ============================================================
-   HERO with interactive product preview
+   HERO with layered floating mockups (tight composition)
    ============================================================ */
-type View = "dashboard" | "coach" | "log";
-
 function Hero() {
-  const [view, setView] = useState<View>("dashboard");
-
   return (
-    <section className="relative pt-12 md:pt-20 pb-16 md:pb-24">
+    <section className="relative pt-12 md:pt-16 pb-16 md:pb-20">
       <div className="absolute inset-0 bg-mesh pointer-events-none opacity-80" />
       <div className="absolute inset-0 bg-grid pointer-events-none" />
 
       <div className="relative max-w-6xl mx-auto px-4 md:px-6">
         <div className="text-center max-w-4xl mx-auto">
           <Reveal>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur text-xs text-orange-200 font-medium mb-7">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur text-xs text-orange-200 font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500 pulse-soft" />
               Coach in je broekzak — €2/mo
             </div>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-extrabold tracking-tightest leading-[0.9] mb-7">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tightest leading-[0.9] mb-6">
               Train. Eet.
               <br />
               <span className="text-gradient-orange">Verbeter.</span>
             </h1>
           </Reveal>
           <Reveal delay={160}>
-            <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg md:text-xl text-stone-400 max-w-2xl mx-auto mb-8 leading-relaxed">
               Eén dashboard voor je hele journey. AI coach die je profiel kent
               en elke dag zegt wat je morgen moet doen.
             </p>
@@ -123,63 +116,102 @@ function Hero() {
           </Reveal>
         </div>
 
-        {/* Interactive product preview */}
+        {/* Layered floating mockups — tight diagonal composition */}
         <Reveal delay={400}>
-          <div className="relative mt-14 md:mt-20 max-w-5xl mx-auto">
+          <div className="relative mt-10 md:mt-14 max-w-4xl mx-auto h-[420px] sm:h-[460px] md:h-[500px]">
             <div className="absolute inset-0 bg-glow-orange opacity-50 pointer-events-none" />
 
-            {/* Tab switcher */}
-            <div className="flex justify-center gap-1.5 mb-5 relative z-10">
-              {(
-                [
-                  { id: "dashboard", label: "Dashboard", icon: Activity },
-                  { id: "coach", label: "AI Coach", icon: MessageSquare },
-                  { id: "log", label: "Daglog", icon: ClipboardCheck },
-                ] as const
-              ).map((t) => {
-                const I = t.icon;
-                const active = view === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => setView(t.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      active
-                        ? "bg-orange-500 text-stone-950 shadow-lg shadow-orange-500/30"
-                        : "bg-white/5 text-stone-300 hover:bg-white/10"
-                    }`}
-                  >
-                    <I size={14} />
-                    {t.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Mockup */}
-            <div className="relative">
-              <TiltCard className="rounded-2xl" intensity={4}>
-                <div className="rounded-2xl border border-white/10 bg-stone-950/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden min-h-[420px] md:min-h-[460px]">
-                  <div className="border-b border-white/5 px-5 py-3 flex items-center gap-2">
+            {/* CENTRAL — Dashboard mockup (hero) */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[88%] sm:w-[78%] md:w-[72%] z-20 float-y">
+              <TiltCard className="rounded-2xl" intensity={3}>
+                <div className="rounded-2xl border border-white/10 bg-stone-950/95 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+                  <div className="border-b border-white/5 px-4 py-2.5 flex items-center gap-2">
                     <div className="flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
+                      <div className="w-2 h-2 rounded-full bg-stone-700" />
+                      <div className="w-2 h-2 rounded-full bg-stone-700" />
+                      <div className="w-2 h-2 rounded-full bg-stone-700" />
                     </div>
-                    <div className="text-xs text-stone-500 ml-3">forge — {view}</div>
+                    <div className="text-[10px] text-stone-500 ml-2">forge — Dashboard</div>
                   </div>
-                  <div className="p-5 md:p-7" key={view}>
-                    {view === "dashboard" && <DashboardPreview />}
-                    {view === "coach" && <CoachPreview />}
-                    {view === "log" && <LogPreview />}
+                  <div className="p-4 md:p-5">
+                    <DashboardPreview />
                   </div>
                 </div>
+              </TiltCard>
+            </div>
+
+            {/* TOP-LEFT FLOATER — Coach chat (closer + overlapping central) */}
+            <div className="hidden sm:block absolute left-[2%] top-[8%] w-[200px] md:w-[240px] z-30 float-y-delay">
+              <TiltCard className="rounded-2xl" intensity={5}>
+                <ChatMini />
+              </TiltCard>
+            </div>
+
+            {/* BOTTOM-RIGHT FLOATER — Daglog feedback (closer + overlapping central) */}
+            <div className="hidden sm:block absolute right-[2%] bottom-[8%] w-[200px] md:w-[240px] z-30 float-y-delay-2">
+              <TiltCard className="rounded-2xl" intensity={5}>
+                <LogMini />
               </TiltCard>
             </div>
           </div>
         </Reveal>
       </div>
     </section>
+  );
+}
+
+function ChatMini() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="border-b border-white/5 px-3 py-2 flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-soft" />
+        <span className="text-[10px] text-stone-400 font-medium">AI Coach</span>
+      </div>
+      <div className="p-3 space-y-2">
+        <div className="bg-orange-500 text-stone-950 rounded-xl rounded-tr-sm px-2.5 py-1.5 text-[11px] font-medium ml-6">
+          <Typewriter text="Wat eet ik vandaag?" speedMs={28} />
+        </div>
+        <div className="bg-stone-900 border border-white/5 rounded-xl rounded-tl-sm px-2.5 py-1.5 text-[11px] leading-snug text-stone-200">
+          <Typewriter
+            text="Cut-doel: 2400 kcal, 200g eiwit. Vandaag rest, dus 50g minder carbs."
+            speedMs={16}
+            startDelayMs={1200}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LogMini() {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-stone-950/95 backdrop-blur-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="border-b border-white/5 px-3 py-2 flex items-center justify-between">
+        <span className="text-[10px] text-stone-400 font-medium">Dag-feedback</span>
+        <div className="w-7 h-7 rounded-md bg-orange-500/10 border border-orange-500/40 flex items-center justify-center">
+          <span className="hero-num text-xs text-orange-400">
+            <CountUp to={8} duration={900} />
+          </span>
+        </div>
+      </div>
+      <div className="p-3 space-y-1.5 text-[11px]">
+        {[
+          { l: "Voeding", s: 8, c: "text-emerald-400" },
+          { l: "Training", s: 9, c: "text-emerald-400" },
+          { l: "Herstel", s: 6, c: "text-orange-400" },
+        ].map((r, i) => (
+          <div key={r.l} className="flex items-center justify-between">
+            <span className="text-stone-400">{r.l}</span>
+            <span className={`hero-num ${r.c}`}>
+              <CountUp to={r.s} duration={800 + i * 150} />
+            </span>
+          </div>
+        ))}
+        <div className="border-l-2 border-orange-500 pl-2 text-stone-300 text-[10px] mt-2 leading-snug">
+          → 1L meer water morgen
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -247,103 +279,7 @@ function PreviewStat({
   );
 }
 
-function CoachPreview() {
-  return (
-    <div className="space-y-3 rise-in">
-      <div className="flex items-center gap-2 pb-2 border-b border-white/5 mb-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 pulse-soft" />
-        <span className="text-xs text-stone-400 font-medium">
-          AI Coach — Online
-        </span>
-      </div>
-      <div className="bg-orange-500 text-stone-950 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm font-medium ml-12">
-        <Typewriter text="Plateau bij bench press, wat doe ik?" speedMs={25} />
-      </div>
-      <div className="bg-stone-900 border border-white/5 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-stone-200 mr-12 leading-relaxed">
-        <Typewriter
-          text="Met 3 jaar ervaring en 4×/week is dit volume-plateau. Voeg 2 sets DB press + dips toe. Check ook je slaap — 6h is te weinig voor 87.5kg bench progressie."
-          speedMs={15}
-          startDelayMs={1200}
-        />
-      </div>
-      <div className="bg-orange-500 text-stone-950 rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm font-medium ml-12">
-        <Typewriter
-          text="En mijn cut?"
-          speedMs={25}
-          startDelayMs={5000}
-        />
-      </div>
-      <div className="bg-stone-900 border border-white/5 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-stone-200 mr-12 leading-relaxed">
-        <Typewriter
-          text="98.2 → 92 in 16 weken = 0.4kg/week. Realistisch. Eiwit van 186 → 200g, stappen 6.5k → 8k op rustdagen, en bewaar Monster Zero voor pre-workout."
-          speedMs={15}
-          startDelayMs={6500}
-        />
-      </div>
-    </div>
-  );
-}
-
-function LogPreview() {
-  return (
-    <div className="space-y-4 rise-in">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-        {[
-          { l: "Voeding", s: 8, c: "text-emerald-400 border-emerald-500/40 bg-emerald-500/5" },
-          { l: "Training", s: 9, c: "text-emerald-400 border-emerald-500/40 bg-emerald-500/5" },
-          { l: "Herstel", s: 6, c: "text-orange-400 border-orange-500/40 bg-orange-500/5" },
-          { l: "Consistency", s: 8, c: "text-emerald-400 border-emerald-500/40 bg-emerald-500/5" },
-        ].map((r, i) => (
-          <div
-            key={r.l}
-            className={`border rounded-lg p-3 ${r.c.split(" ").slice(1).join(" ")}`}
-          >
-            <div className="flex items-baseline justify-between">
-              <div className="text-xs text-stone-300 font-medium">{r.l}</div>
-              <div className={`hero-num text-2xl ${r.c.split(" ")[0]}`}>
-                <CountUp to={r.s} duration={800 + i * 200} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="border border-orange-500 bg-stone-900/40 rounded-xl p-5">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 border-2 border-orange-500 bg-orange-500/10 rounded-lg flex items-center justify-center">
-            <span className="hero-num text-2xl text-orange-400">
-              <CountUp to={8} />
-            </span>
-          </div>
-          <div>
-            <div className="text-xs text-stone-500 font-medium">
-              Vandaag · cijfer
-            </div>
-            <div className="text-xs text-stone-500">/ 10</div>
-          </div>
-        </div>
-        <p className="text-sm text-stone-200 leading-relaxed mb-3">
-          <Typewriter
-            text="Solide push session, eiwit op niveau. Slaap was 6.2u — onder je gemiddelde van 7.1u."
-            speedMs={12}
-            startDelayMs={500}
-          />
-        </p>
-        <div className="border-l-2 border-orange-500 pl-3">
-          <div className="text-xs text-stone-500 font-medium mb-0.5">
-            Voor morgen
-          </div>
-          <p className="text-sm text-orange-300">
-            <Typewriter
-              text="→ Probeer 22:30 in bed te liggen"
-              speedMs={20}
-              startDelayMs={5500}
-            />
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+/* (CoachPreview & LogPreview removed — replaced by ChatMini & LogMini in Hero) */
 
 /* ============================================================
    COACH section (showcase + counts)
