@@ -1,0 +1,19 @@
+node_modules
+.next
+out
+build
+dist
+.DS_Store
+.env
+.env.local
+.env*.local
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+.idea
+.vscode
+
+# Local-only deployment helpers (contain secrets)
+deploy.sh
+.npm-cache/
+_tabs_payload.json
