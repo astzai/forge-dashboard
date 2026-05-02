@@ -5,14 +5,16 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0a0908;
-  --bg-elev: #14110f;
+  --bg: #08070a;
+  --bg-elev: #11100f;
   --bg-elev-2: #1c1917;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
   --orange: #f97316;
-  --orange-glow: rgba(249, 115, 22, 0.5);
-  --lime: #84cc16;
+  --amber: #fbbf24;
+  --lime: #a3e635;
+  --pink: #f472b6;
+  --cyan: #22d3ee;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -35,13 +37,9 @@ h1, h2, h3, h4 {
 }
 
 input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type='number'] { -moz-appearance: textfield; }
 
-/* Reusable utility classes */
 .label {
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -55,7 +53,6 @@ input[type='number'] { -moz-appearance: textfield; }
   font-variant-numeric: tabular-nums;
 }
 
-/* Hero number — big, dramatic */
 .hero-num {
   font-family: "Inter", system-ui, sans-serif;
   font-feature-settings: "tnum";
@@ -65,70 +62,145 @@ input[type='number'] { -moz-appearance: textfield; }
   line-height: 0.9;
 }
 
-/* Glowy orange button */
 .btn-primary {
-  background: var(--orange);
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
   color: #0a0908;
   font-weight: 600;
-  border-radius: 8px;
-  padding: 11px 18px;
+  border-radius: 10px;
+  padding: 11px 20px;
   font-size: 14px;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 24px -4px rgba(249, 115, 22, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 .btn-primary:hover {
-  background: #fb923c;
-  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px -4px rgba(249, 115, 22, 0.55), inset 0 1px 0 rgba(255,255,255,0.25);
 }
-.btn-primary:active {
-  transform: scale(0.98);
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e7e5e4;
+  font-weight: 500;
+  border-radius: 10px;
+  padding: 11px 20px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: rgba(255,255,255,0.02);
+}
+.btn-ghost:hover {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.04);
 }
 
-/* Card surface */
 .card {
   background: var(--bg-elev);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
-/* Safe area for bottom nav on iPhone */
-.pb-safe {
-  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+.card-hover {
+  transition: all 0.2s ease;
+}
+.card-hover:hover {
+  border-color: rgba(249, 115, 22, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -12px rgba(249, 115, 22, 0.2);
 }
 
-/* Hide scrollbar utility for nav */
+.pb-safe { padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px)); }
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Subtle pulse for live indicators */
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+@keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
 
-/* Glow ring on hover */
-.glow-orange:hover {
-  box-shadow: 0 0 24px rgba(249, 115, 22, 0.25);
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.float-y { animation: float-y 6s ease-in-out infinite; }
+.float-y-delay { animation: float-y 6s ease-in-out infinite; animation-delay: -2s; }
+.float-y-delay-2 { animation: float-y 6s ease-in-out infinite; animation-delay: -4s; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 8s linear infinite;
 }
 
-/* Subtle grid background pattern */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(249, 115, 22, 0.2); }
+  50% { box-shadow: 0 0 64px rgba(249, 115, 22, 0.45); }
+}
+.glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 60s linear infinite; }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise-in { animation: rise-in 0.6s ease-out forwards; }
+
 .bg-grid {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at center, black, transparent);
 }
 
-/* Radial glow used in heroes */
-.bg-glow {
-  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.18), transparent 60%);
+.bg-glow-orange {
+  background: radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.25), transparent 60%);
+}
+.bg-glow-amber {
+  background: radial-gradient(circle at 30% 30%, rgba(251, 191, 36, 0.2), transparent 50%);
+}
+.bg-glow-pink {
+  background: radial-gradient(circle at 70% 30%, rgba(244, 114, 182, 0.18), transparent 55%);
 }
 
-/* Text gradient utility */
-.text-gradient {
-  background: linear-gradient(180deg, #fafaf9 0%, #a8a29e 100%);
+/* Animated mesh gradient backdrop */
+.bg-mesh {
+  background:
+    radial-gradient(at 20% 20%, rgba(249, 115, 22, 0.18) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(244, 114, 182, 0.12) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, rgba(163, 230, 53, 0.10) 0px, transparent 50%),
+    radial-gradient(at 0% 80%, rgba(34, 211, 238, 0.10) 0px, transparent 50%);
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 50%, #ef4444 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
-/* Make whole app feel like an app on mobile (no tap highlight, prevent overscroll bounce on inputs) */
+.text-gradient-mute {
+  background: linear-gradient(180deg, #fafaf9 0%, #78716c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.divider-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.5), transparent);
+}
+
 * { -webkit-tap-highlight-color: transparent; }
+
+/* Scroll-trigger placeholder (without JS): use CSS animation that runs when in viewport */
+@media (prefers-reduced-motion: reduce) {
+  .float-y, .float-y-delay, .float-y-delay-2, .glow-pulse, .spin-slow, .pulse-soft { animation: none; }
+}
