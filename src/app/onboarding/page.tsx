@@ -522,27 +522,37 @@ export default function OnboardingPage() {
                   ))}
                 </div>
               </Field>
-              <div className="border border-stone-800 bg-stone-900/50 rounded-md p-4 text-sm text-stone-400 leading-relaxed">
-                Pak je gratis Anthropic key op{" "}
-                <a
-                  href="https://console.anthropic.com/settings/keys"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-orange-400 underline"
-                >
-                  console.anthropic.com
-                </a>
-                . Wij slaan 'm versleuteld op (AES-256-GCM, server-side). Je kan
-                'm later toevoegen via Settings.
+              <div className="border border-emerald-500/30 bg-emerald-500/5 rounded-md p-4 text-sm text-stone-300 leading-relaxed">
+                ✓ <strong>AI is ingebouwd</strong> — je hoeft niets te
+                configureren. Klik gewoon "Naar dashboard" en je AI coach werkt
+                meteen.
               </div>
-              <Field label="Anthropic API key (optioneel)">
-                <TextInput
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-ant-..."
-                />
-              </Field>
+              <details className="border border-stone-800 bg-stone-900/40 rounded-md">
+                <summary className="cursor-pointer p-4 text-sm text-stone-400 hover:text-stone-200">
+                  Liever je eigen Anthropic API key gebruiken? (optioneel)
+                </summary>
+                <div className="px-4 pb-4 space-y-3">
+                  <p className="text-xs text-stone-500 leading-relaxed">
+                    Voor extra privacy kun je je eigen key gebruiken. Pak 'm
+                    gratis op{" "}
+                    <a
+                      href="https://console.anthropic.com/settings/keys"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-orange-400 underline"
+                    >
+                      console.anthropic.com
+                    </a>
+                    . Wij slaan 'm versleuteld op.
+                  </p>
+                  <TextInput
+                    type="password"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="sk-ant-..."
+                  />
+                </div>
+              </details>
             </>
           )}
 

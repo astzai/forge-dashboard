@@ -456,7 +456,7 @@ export default function SettingsPage() {
           {profile.has_anthropic_key ? (
             <div className="flex items-center justify-between border border-emerald-500/40 bg-emerald-500/5 rounded-md p-4">
               <div className="text-sm text-emerald-400">
-                ● Key actief — AI features ingeschakeld.
+                ● Eigen key actief — jouw key wordt gebruikt voor AI calls.
               </div>
               <button
                 onClick={deleteApiKey}
@@ -467,14 +467,20 @@ export default function SettingsPage() {
               </button>
             </div>
           ) : (
-            <p className="text-sm text-orange-400">
-              Geen Anthropic key ingesteld — AI features uitgeschakeld.
-            </p>
+            <div className="border border-stone-700 bg-stone-900/60 rounded-md p-4">
+              <p className="text-sm text-stone-300">
+                ✓ Managed mode actief — AI features werken zonder eigen key.
+              </p>
+              <p className="text-xs text-stone-500 mt-1">
+                Je hoeft niets te configureren. Wil je je eigen key gebruiken
+                voor extra privacy? Vul 'm hieronder in.
+              </p>
+            </div>
           )}
 
           <Field
-            label="Anthropic API key (vervangen)"
-            hint="Pak op console.anthropic.com → Settings → API Keys"
+            label="Eigen Anthropic key (optioneel)"
+            hint="Optioneel: gebruik je eigen key i.p.v. managed mode. Pak op console.anthropic.com → API Keys"
           >
             <div className="flex gap-2">
               <TextInput

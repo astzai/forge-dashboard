@@ -61,7 +61,7 @@ export function DailyLogTab({
     let nutrition: any = null;
 
     if (food.trim()) {
-      if (!profile.has_anthropic_key) {
+      if (false) {
         setNeedsKey(true);
         return;
       }
@@ -94,7 +94,8 @@ export function DailyLogTab({
     const protein = nutrition?.protein || 0;
 
     let fb: Feedback | null = null;
-    if (profile.has_anthropic_key) {
+    {
+      // Always try AI feedback — server falls back to managed mode if no user key
       setAnalyzingFeedback(true);
       try {
         const res = await fetch("/api/daily-feedback", {
@@ -217,7 +218,7 @@ export function DailyLogTab({
           </Field>
         </div>
 
-        {!profile.has_anthropic_key && (
+        {false && (
           <p className="text-xs text-stone-500 font-mono mb-3">
             Geen API key — log wordt zonder voedingsanalyse en feedback opgeslagen.
           </p>

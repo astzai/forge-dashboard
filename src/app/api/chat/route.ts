@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { CLAUDE_MODEL, getUserAnthropic, NoApiKeyError } from "@/lib/claude";
+import {
+  CLAUDE_MODEL,
+  getUserAnthropic,
+  logUsage,
+  NoApiKeyError,
+} from "@/lib/claude";
 import { buildSystemPrompt } from "@/lib/system-prompt";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,7 +19,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "messages required" }, { status: 400 });
     }
 
-    const { client } = await getUserAnthropic();
+    const { client, userId, usedManaged } = await getUserAnthropic();
     const supabase = createClient();
     const {
       data: { user },
@@ -56,6 +61,14 @@ export async function POST(req: Request) {
     const text = response.content
       .map((b: any) => (b.type === "text" ? b.text : ""))
       .join("");
+
+    await logUsage({
+      userId,
+      callType: "chat",
+      usedManaged,
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    });
 
     return NextResponse.json({ reply: text });
   } catch (err: any) {

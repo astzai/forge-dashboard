@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { CLAUDE_MODEL, getUserAnthropic, NoApiKeyError } from "@/lib/claude";
+import {
+  CLAUDE_MODEL,
+  getUserAnthropic,
+  logUsage,
+  NoApiKeyError,
+} from "@/lib/claude";
 
 export const runtime = "nodejs";
 
@@ -10,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "food required" }, { status: 400 });
     }
 
-    const { client } = await getUserAnthropic();
+    const { client, userId, usedManaged } = await getUserAnthropic();
 
     const response = await client.messages.create({
       model: CLAUDE_MODEL,
@@ -41,6 +46,13 @@ export async function POST(req: Request) {
       );
     }
 
+    await logUsage({
+      userId,
+      callType: "food",
+      usedManaged,
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    });
     return NextResponse.json(parsed);
   } catch (err: any) {
     if (err instanceof NoApiKeyError) {

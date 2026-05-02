@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { CLAUDE_MODEL, getUserAnthropic, NoApiKeyError } from "@/lib/claude";
+import {
+  CLAUDE_MODEL,
+  getUserAnthropic,
+  logUsage,
+  NoApiKeyError,
+} from "@/lib/claude";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -27,7 +32,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "date required" }, { status: 400 });
     }
 
-    const { client } = await getUserAnthropic();
+    const { client, usedManaged } = await getUserAnthropic();
     const supabase = createClient();
     const {
       data: { user },
@@ -150,6 +155,14 @@ export async function POST(req: Request) {
       },
       { onConflict: "user_id,check_in_date" },
     );
+
+    await logUsage({
+      userId: user.id,
+      callType: "photo",
+      usedManaged,
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    });
 
     return NextResponse.json(parsed);
   } catch (err: any) {

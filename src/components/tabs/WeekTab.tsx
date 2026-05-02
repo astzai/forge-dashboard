@@ -45,7 +45,7 @@ export function WeekTab({ profile }: { profile: Profile }) {
 
   const generate = async () => {
     setError(null);
-    if (!profile.has_anthropic_key) {
+    if (false) {
       setNeedsKey(true);
       return;
     }

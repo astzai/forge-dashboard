@@ -17,7 +17,7 @@ export function ChatTab({ profile }: { profile: Profile }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [needsKey, setNeedsKey] = useState(!profile.has_anthropic_key);
+  const [needsKey, setNeedsKey] = useState(false); // only set after 402 from server
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

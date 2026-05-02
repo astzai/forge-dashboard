@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { CLAUDE_MODEL, getUserAnthropic, NoApiKeyError } from "@/lib/claude";
+import {
+  CLAUDE_MODEL,
+  getUserAnthropic,
+  logUsage,
+  NoApiKeyError,
+} from "@/lib/claude";
 import { buildSystemPrompt } from "@/lib/system-prompt";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,7 +24,7 @@ export async function POST(req: Request) {
       protein: number;
     };
 
-    const { client } = await getUserAnthropic();
+    const { client, userId, usedManaged } = await getUserAnthropic();
     const supabase = createClient();
     const {
       data: { user },
@@ -123,6 +128,13 @@ Antwoord ALLEEN met geldig JSON met DEZE EXACTE structuur:
         tomorrow: "Blijf consistent.",
       };
     }
+    await logUsage({
+      userId,
+      callType: "daily",
+      usedManaged,
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    });
     return NextResponse.json(parsed);
   } catch (err: any) {
     if (err instanceof NoApiKeyError) {

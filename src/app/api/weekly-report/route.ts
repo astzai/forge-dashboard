@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { CLAUDE_MODEL, getUserAnthropic, NoApiKeyError } from "@/lib/claude";
+import {
+  CLAUDE_MODEL,
+  getUserAnthropic,
+  logUsage,
+  NoApiKeyError,
+} from "@/lib/claude";
 import { buildSystemPrompt } from "@/lib/system-prompt";
 import { createClient } from "@/lib/supabase/server";
 
@@ -33,7 +38,7 @@ export async function POST(req: Request) {
     weekEndDate.setUTCDate(weekEndDate.getUTCDate() + 6);
     const weekEnd = weekEndDate.toISOString().slice(0, 10);
 
-    const { client } = await getUserAnthropic();
+    const { client, usedManaged } = await getUserAnthropic();
 
     const [{ data: profile }, { data: logs }, { data: latestPhotoAssessment }] =
       await Promise.all([
@@ -168,6 +173,14 @@ Antwoord ALLEEN met geldig JSON:
       },
       { onConflict: "user_id,week_start" },
     );
+
+    await logUsage({
+      userId: user.id,
+      callType: "weekly",
+      usedManaged,
+      inputTokens: response.usage?.input_tokens ?? 0,
+      outputTokens: response.usage?.output_tokens ?? 0,
+    });
 
     return NextResponse.json({ week_start: weekStart, report: reportPayload });
   } catch (err: any) {

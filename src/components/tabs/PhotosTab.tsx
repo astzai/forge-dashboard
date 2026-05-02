@@ -121,7 +121,7 @@ export function PhotosTab({ profile }: { profile: Profile }) {
     setUploading(false);
 
     // Trigger AI assessment
-    if (!profile.has_anthropic_key) {
+    if (false) {
       setNeedsKey(true);
       return;
     }
@@ -251,7 +251,7 @@ export function PhotosTab({ profile }: { profile: Profile }) {
             </>
           )}
         </PrimaryButton>
-        {!profile.has_anthropic_key && (
+        {false && (
           <p className="text-xs text-stone-500 mt-2">
             Geen Anthropic key — uploads worden bewaard, AI assessment komt later.
           </p>
