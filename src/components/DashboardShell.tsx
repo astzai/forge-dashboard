@@ -6,8 +6,10 @@ import {
   Activity,
   Calculator,
   Calendar,
+  Camera,
   ClipboardCheck,
   Dumbbell,
+  FileText,
   Flame,
   MessageSquare,
   Settings,
@@ -23,6 +25,8 @@ import { ScheduleTab } from "@/components/tabs/ScheduleTab";
 import { AgendaTab } from "@/components/tabs/AgendaTab";
 import { CalculatorTab } from "@/components/tabs/CalculatorTab";
 import { SportBurnTab } from "@/components/tabs/SportBurnTab";
+import { PhotosTab } from "@/components/tabs/PhotosTab";
+import { WeekTab } from "@/components/tabs/WeekTab";
 import {
   getProfile,
   listLogs,
@@ -34,6 +38,8 @@ import type { DailyLog, Profile, ScheduleEntry } from "@/lib/types";
 const TABS = [
   { id: "dashboard", label: "Dashboard", icon: Activity },
   { id: "log", label: "Daglog", icon: ClipboardCheck },
+  { id: "photos", label: "Foto's", icon: Camera },
+  { id: "week", label: "Week", icon: FileText },
   { id: "weight", label: "Gewicht", icon: TrendingDown },
   { id: "chat", label: "AI Coach", icon: MessageSquare },
   { id: "schedule", label: "Schema", icon: Dumbbell },
@@ -156,6 +162,8 @@ export function DashboardShell() {
         {activeTab === "log" && (
           <DailyLogTab logs={logs} onSaved={onLogSaved} profile={profile} />
         )}
+        {activeTab === "photos" && <PhotosTab profile={profile} />}
+        {activeTab === "week" && <WeekTab profile={profile} />}
         {activeTab === "weight" && <WeightTab logs={logs} profile={profile} />}
         {activeTab === "chat" && <ChatTab profile={profile} />}
         {activeTab === "schedule" && (

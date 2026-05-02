@@ -91,3 +91,62 @@ export type ChatMessage = {
   content: string;
   created_at?: string;
 };
+
+export type PhotoAngle = "front" | "side" | "back";
+
+export type ProgressPhoto = {
+  id?: string;
+  user_id?: string;
+  check_in_date: string;
+  angle: PhotoAngle;
+  storage_path: string;
+  created_at?: string;
+};
+
+export type PhotoAssessment = {
+  id?: string;
+  user_id?: string;
+  check_in_date: string;
+  assessment: {
+    summary: string;
+    observations: string[];
+    focus_areas: string[];
+    motivation: string;
+  };
+  created_at?: string;
+};
+
+// Richer daily feedback structure (replaces simple Feedback above for new logs)
+export type RichFeedback = {
+  // Backwards-compat fields:
+  score: number;
+  feedback: string;
+  tomorrow: string;
+  // New fields:
+  sections?: {
+    voeding: { score: number; note: string };
+    training: { score: number; note: string };
+    herstel: { score: number; note: string };
+    consistency: { score: number; note: string };
+  };
+  trend_context?: string;
+};
+
+export type WeeklyReport = {
+  id?: string;
+  user_id?: string;
+  week_start: string;
+  report: {
+    summary: string;
+    weight_change_kg: number | null;
+    avg_calories: number | null;
+    avg_protein: number | null;
+    sport_count: number;
+    avg_sleep: number | null;
+    wins: string[];
+    misses: string[];
+    next_week_focus: string;
+    photo_observation?: string;
+  };
+  created_at?: string;
+};

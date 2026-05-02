@@ -240,38 +240,81 @@ export function DailyLogTab({
         </button>
       </div>
 
-      {feedback && (
-        <div className="border border-orange-500 bg-stone-950 p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-1 h-full bg-orange-500" />
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center justify-center w-16 h-16 border-2 border-orange-500 bg-orange-500/10">
-              <span className="text-2xl font-light text-orange-400">
-                {feedback.score}
-              </span>
-            </div>
-            <div>
-              <div className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-mono">
-                Cijfer voor vandaag
-              </div>
-              <div className="text-xs text-stone-400 font-mono mt-1">/ 10</div>
-            </div>
+      {feedback && <FeedbackCard feedback={feedback as any} />}
+    </div>
+  );
+}
+
+function FeedbackCard({ feedback }: { feedback: any }) {
+  const sections = feedback.sections;
+  return (
+    <div className="space-y-4">
+      <div className="border border-orange-500 bg-stone-950 rounded-lg p-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1 h-full bg-orange-500" />
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center justify-center w-16 h-16 border-2 border-orange-500 bg-orange-500/10 rounded-md">
+            <span className="text-2xl num font-medium text-orange-400">
+              {feedback.score}
+            </span>
           </div>
-          <div className="space-y-3 text-sm">
-            <div>
-              <div className="text-[10px] uppercase tracking-wider text-stone-600 font-mono mb-1">
-                Feedback
-              </div>
-              <p className="text-stone-200 leading-relaxed">{feedback.feedback}</p>
+          <div>
+            <div className="text-xs text-stone-500 font-medium">
+              Cijfer voor vandaag
             </div>
-            <div>
-              <div className="text-[10px] uppercase tracking-wider text-stone-600 font-mono mb-1">
-                Voor morgen
-              </div>
-              <p className="text-orange-300 leading-relaxed">
-                → {feedback.tomorrow}
-              </p>
-            </div>
+            <div className="text-xs text-stone-500 mt-0.5">/ 10</div>
           </div>
+        </div>
+        <p className="text-stone-200 leading-relaxed mb-3">
+          {feedback.feedback}
+        </p>
+        {feedback.trend_context && (
+          <p className="text-sm text-stone-400 italic mb-3">
+            {feedback.trend_context}
+          </p>
+        )}
+        <div className="border-l-2 border-orange-500 pl-3 mt-3">
+          <div className="text-xs text-stone-500 font-medium mb-1">
+            Voor morgen
+          </div>
+          <p className="text-orange-300 leading-relaxed">
+            → {feedback.tomorrow}
+          </p>
+        </div>
+      </div>
+
+      {sections && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {(["voeding", "training", "herstel", "consistency"] as const).map(
+            (k) => {
+              const s = sections[k];
+              if (!s) return null;
+              const score = Number(s.score) || 0;
+              const color =
+                score >= 8
+                  ? "text-emerald-400 border-emerald-500/40 bg-emerald-500/5"
+                  : score >= 5
+                    ? "text-orange-400 border-orange-500/40 bg-orange-500/5"
+                    : "text-red-400 border-red-500/40 bg-red-500/5";
+              return (
+                <div
+                  key={k}
+                  className={`border rounded-lg p-4 ${color.split(" ").slice(1).join(" ")}`}
+                >
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <div className="text-xs text-stone-300 font-medium capitalize">
+                      {k}
+                    </div>
+                    <div className={`num text-lg font-medium ${color.split(" ")[0]}`}>
+                      {score}
+                    </div>
+                  </div>
+                  <p className="text-xs text-stone-300 leading-relaxed">
+                    {s.note}
+                  </p>
+                </div>
+              );
+            },
+          )}
         </div>
       )}
     </div>

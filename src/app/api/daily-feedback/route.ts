@@ -4,6 +4,7 @@ import { buildSystemPrompt } from "@/lib/system-prompt";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
@@ -48,25 +49,61 @@ export async function POST(req: Request) {
       );
     }
 
-    const system = buildSystemPrompt(profile as any, (logs as any) ?? []);
+    // Build trend context vs 7-day average (excluding today)
+    const recent = (logs ?? []).filter((l: any) => l.date !== body.date).slice(-7);
+    const avg = (k: "calories" | "protein" | "steps") => {
+      const vals = recent.map((l: any) => Number(l[k]) || 0).filter((v) => v > 0);
+      if (vals.length === 0) return null;
+      return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+    };
+    const avgCalories = avg("calories");
+    const avgProtein = avg("protein");
+    const avgSteps = avg("steps");
 
-    const userMsg = `Geef vandaag een cijfer (0-10) en directe feedback voor morgen.
+    const trendCtx = [
+      avgCalories
+        ? `7-dag gemiddelde kcal: ${avgCalories} (vandaag: ${body.calories})`
+        : null,
+      avgProtein
+        ? `7-dag gemiddelde eiwit: ${avgProtein}g (vandaag: ${body.protein}g)`
+        : null,
+      avgSteps
+        ? `7-dag gemiddelde stappen: ${avgSteps} (vandaag: ${body.steps})`
+        : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const userMsg = `Geef rijke feedback voor vandaag.
 
 Vandaag (${body.date}):
 - Gewicht: ${body.weight ?? "?"}kg
 - Stappen: ${body.steps}
-- Sport: ${body.sport} ${body.sport_duration}min
+- Sport: ${body.sport || "rust"} ${body.sport_duration}min
 - Eten: ${body.food}
-- Calorieën: ${body.calories} kcal
-- Eiwit: ${body.protein}g
+- Calorieën: ${body.calories} kcal, eiwit: ${body.protein}g
 
-Antwoord ALLEEN met geldige JSON:
-{"score": number 0-10, "feedback": "korte feedback max 4 zinnen", "tomorrow": "1 concreet ding voor morgen"}`;
+TREND vs 7-dag gemiddelde (exclusief vandaag):
+${trendCtx || "Niet genoeg historie."}
+
+Antwoord ALLEEN met geldig JSON met DEZE EXACTE structuur:
+{
+  "score": <number 0-10, overall day score>,
+  "feedback": "<2-3 zinnen overall samenvatting>",
+  "tomorrow": "<1 concreet ding voor morgen>",
+  "sections": {
+    "voeding": { "score": <0-10>, "note": "<1 zin>" },
+    "training": { "score": <0-10>, "note": "<1 zin>" },
+    "herstel": { "score": <0-10>, "note": "<1 zin>" },
+    "consistency": { "score": <0-10>, "note": "<1 zin over of vandaag in lijn is met de week>" }
+  },
+  "trend_context": "<1 zin met de meest opvallende trend (bv 'eiwit 30g hoger dan week-gemiddelde')>"
+}`;
 
     const response = await client.messages.create({
       model: CLAUDE_MODEL,
-      max_tokens: 512,
-      system,
+      max_tokens: 800,
+      system: buildSystemPrompt(profile as any, (logs as any) ?? []),
       messages: [{ role: "user", content: userMsg }],
     });
 
