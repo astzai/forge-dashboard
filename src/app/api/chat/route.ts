@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       supabase
         .from("profiles")
         .select(
-          "name, height, current_weight, target_weight, goal, training_days, sleep_hours, stress_level, notes",
+          "name, height, start_weight, current_weight, target_weight, age, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style",
         )
         .eq("user_id", user.id)
         .single(),

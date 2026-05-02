@@ -41,7 +41,10 @@ export function DashboardTab({
   const denom = profile.start_weight - profile.target_weight || 1;
   const progressPct = Math.min(
     100,
-    Math.max(0, ((profile.start_weight - profile.current_weight) / denom) * 100),
+    Math.max(
+      0,
+      ((profile.start_weight - profile.current_weight) / denom) * 100,
+    ),
   );
 
   const last7 = logs
@@ -52,59 +55,59 @@ export function DashboardTab({
   return (
     <div className="space-y-6">
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 border border-stone-800 bg-gradient-to-br from-stone-950 to-stone-900 p-8 relative overflow-hidden">
+        <div className="md:col-span-2 border border-stone-800 bg-gradient-to-br from-stone-950 to-stone-900 rounded-lg p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 blur-3xl rounded-full" />
           <div className="relative">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-orange-400 font-mono mb-2">
-              {dayName.toUpperCase()} ·{" "}
+            <div className="text-sm text-orange-400 font-medium mb-2">
+              {dayName.charAt(0).toUpperCase() + dayName.slice(1)} ·{" "}
               {new Date().toLocaleDateString("nl-NL", {
                 day: "numeric",
                 month: "long",
               })}
             </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-stone-100 leading-tight tracking-tight uppercase mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight mb-3">
               {todaySchedule?.duration === 0
                 ? "Recovery Day"
                 : todaySchedule?.type || "Train hard"}
             </h2>
             {todaySchedule?.exercises && todaySchedule.duration > 0 && (
-              <p className="text-sm text-stone-400 font-mono leading-relaxed mb-4 max-w-2xl">
+              <p className="text-stone-400 leading-relaxed mb-4 max-w-2xl">
                 {todaySchedule.exercises}
               </p>
             )}
             <div className="flex flex-wrap gap-3 mt-6">
               <button
                 onClick={() => setActiveTab("log")}
-                className="bg-orange-500 text-stone-950 px-5 py-2.5 text-xs uppercase tracking-[0.2em] font-mono hover:bg-orange-400 transition-colors flex items-center gap-2"
+                className="bg-orange-500 text-stone-950 px-5 py-2.5 text-sm font-medium rounded-md hover:bg-orange-400 transition-colors flex items-center gap-2"
               >
-                <ClipboardCheck size={14} /> Log dag
+                <ClipboardCheck size={15} /> Log dag
               </button>
               <button
                 onClick={() => setActiveTab("chat")}
-                className="border border-stone-800 hover:border-orange-500 text-stone-300 px-5 py-2.5 text-xs uppercase tracking-[0.2em] font-mono transition-colors flex items-center gap-2"
+                className="border border-stone-800 hover:border-orange-500 text-stone-200 px-5 py-2.5 text-sm font-medium rounded-md transition-colors flex items-center gap-2"
               >
-                <MessageSquare size={14} /> Vraag coach
+                <MessageSquare size={15} /> Vraag coach
               </button>
             </div>
           </div>
         </div>
 
-        <div className="border border-stone-800 bg-stone-950 p-6">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-mono mb-4">
+        <div className="border border-stone-800 bg-stone-950 rounded-lg p-6">
+          <div className="text-xs text-stone-500 font-medium mb-3">
             Voortgang
           </div>
-          <div className="text-5xl font-light text-stone-100 mb-1">
+          <div className="text-5xl font-medium num text-stone-100 mb-1">
             {progressPct.toFixed(0)}
             <span className="text-2xl text-stone-500">%</span>
           </div>
-          <div className="text-xs text-stone-500 font-mono mb-4">van je doel</div>
-          <div className="h-1.5 bg-stone-900 mb-3">
+          <div className="text-sm text-stone-500 mb-4">van je doel</div>
+          <div className="h-2 bg-stone-900 rounded-full mb-3 overflow-hidden">
             <div
               className="h-full bg-orange-500 transition-all"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <div className="flex justify-between text-[10px] font-mono text-stone-600">
+          <div className="flex justify-between text-xs num text-stone-500">
             <span>{profile.start_weight}kg</span>
             <span>{profile.target_weight}kg</span>
           </div>
@@ -138,14 +141,14 @@ export function DashboardTab({
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="border border-stone-800 bg-stone-950 p-6">
+        <div className="border border-stone-800 bg-stone-950 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-stone-500 font-mono">
+            <h3 className="text-sm font-semibold text-stone-200">
               Laatste 7 dagen
             </h3>
             <button
               onClick={() => setActiveTab("weight")}
-              className="text-[10px] uppercase tracking-wider text-orange-400 font-mono hover:text-orange-300"
+              className="text-xs text-orange-400 hover:text-orange-300"
             >
               Meer →
             </button>
@@ -158,18 +161,17 @@ export function DashboardTab({
                   <XAxis
                     dataKey="date"
                     stroke="#57534e"
-                    tick={{ fontSize: 10, fontFamily: "monospace" }}
+                    tick={{ fontSize: 11 }}
                   />
                   <YAxis
                     stroke="#57534e"
-                    tick={{ fontSize: 10, fontFamily: "monospace" }}
+                    tick={{ fontSize: 11 }}
                     domain={["dataMin - 1", "dataMax + 1"]}
                   />
                   <Tooltip
                     contentStyle={{
                       background: "#0c0a09",
                       border: "1px solid #292524",
-                      fontFamily: "monospace",
                       fontSize: 12,
                     }}
                   />
@@ -184,20 +186,20 @@ export function DashboardTab({
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-40 flex items-center justify-center text-stone-600 text-xs font-mono">
+            <div className="h-40 flex items-center justify-center text-stone-600 text-sm">
               Geen data — log je eerste dag
             </div>
           )}
         </div>
 
-        <div className="border border-stone-800 bg-stone-950 p-6">
+        <div className="border border-stone-800 bg-stone-950 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-stone-500 font-mono">
+            <h3 className="text-sm font-semibold text-stone-200">
               Recente feedback
             </h3>
             <button
               onClick={() => setActiveTab("agenda")}
-              className="text-[10px] uppercase tracking-wider text-orange-400 font-mono hover:text-orange-300"
+              className="text-xs text-orange-400 hover:text-orange-300"
             >
               Alle →
             </button>
@@ -205,27 +207,27 @@ export function DashboardTab({
           {lastLog?.feedback ? (
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 border border-orange-500/50 bg-orange-500/10 flex items-center justify-center">
-                  <span className="text-xl font-light text-orange-400">
+                <div className="w-12 h-12 border border-orange-500/50 bg-orange-500/10 rounded-md flex items-center justify-center">
+                  <span className="text-xl font-medium num text-orange-400">
                     {lastLog.feedback.score}
                   </span>
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-stone-600 font-mono">
+                  <div className="text-xs text-stone-500 num">
                     {lastLog.date}
                   </div>
-                  <div className="text-xs text-stone-400 font-mono">/ 10</div>
+                  <div className="text-xs text-stone-500">/ 10</div>
                 </div>
               </div>
-              <p className="text-xs text-stone-300 leading-relaxed">
+              <p className="text-sm text-stone-300 leading-relaxed">
                 {lastLog.feedback.feedback}
               </p>
-              <p className="text-xs text-orange-300 leading-relaxed border-l-2 border-orange-500 pl-3">
+              <p className="text-sm text-orange-300 leading-relaxed border-l-2 border-orange-500 pl-3">
                 → {lastLog.feedback.tomorrow}
               </p>
             </div>
           ) : (
-            <div className="text-stone-600 text-xs font-mono py-8 text-center">
+            <div className="text-stone-600 text-sm py-8 text-center">
               Vul je eerste log in voor coach feedback
             </div>
           )}

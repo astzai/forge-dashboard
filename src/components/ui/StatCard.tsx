@@ -19,22 +19,20 @@ export function StatCard({
   accent?: boolean;
 }) {
   return (
-    <div className="relative overflow-hidden border border-stone-800 bg-stone-950 p-5">
+    <div className="relative overflow-hidden border border-stone-800 bg-stone-950 rounded-lg p-5">
       <div className="flex items-start justify-between mb-3">
-        <span className="text-[10px] uppercase tracking-[0.2em] text-stone-500 font-mono">
-          {label}
-        </span>
+        <span className="text-xs text-stone-500 font-medium">{label}</span>
         {Icon && <Icon size={14} className="text-stone-600" />}
       </div>
       <div className="flex items-baseline gap-1.5">
-        <span className="text-3xl font-light tracking-tight text-stone-100">
+        <span className="num text-3xl font-medium tracking-tight text-stone-100">
           {value}
         </span>
-        {unit && <span className="text-xs text-stone-500 font-mono">{unit}</span>}
+        {unit && <span className="text-sm text-stone-500">{unit}</span>}
       </div>
       {trend !== undefined && trend !== null && (
         <div
-          className={`mt-2 flex items-center gap-1 text-xs font-mono ${
+          className={`mt-2 flex items-center gap-1 text-xs ${
             trend < 0
               ? "text-emerald-400"
               : trend > 0
@@ -47,7 +45,7 @@ export function StatCard({
           ) : trend > 0 ? (
             <TrendingUp size={12} />
           ) : null}
-          <span>
+          <span className="num">
             {trend > 0 ? "+" : ""}
             {trend}
             {unit}

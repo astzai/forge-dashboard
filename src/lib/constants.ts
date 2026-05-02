@@ -1,3 +1,11 @@
+import type {
+  CoachStyle,
+  CookingFreq,
+  DietStyle,
+  ExperienceLevel,
+  WorkType,
+} from "./types";
+
 export const DAYS = [
   "Maandag",
   "Dinsdag",
@@ -8,7 +16,10 @@ export const DAYS = [
   "Zondag",
 ] as const;
 
-export const DEFAULT_SCHEDULE: Record<string, { type: string; exercises: string; duration: number; time: string }> = {
+export const DEFAULT_SCHEDULE: Record<
+  string,
+  { type: string; exercises: string; duration: number; time: string }
+> = {
   Maandag: { type: "Push (Borst, Schouders, Triceps)", exercises: "Bench Press 4x8, Incline DB Press 3x10, Shoulder Press 3x10, Lateral Raises 3x12, Tricep Pushdowns 3x12", duration: 60, time: "18:00" },
   Dinsdag: { type: "Pull (Rug, Biceps)", exercises: "Deadlift 4x6, Pull-ups 4x8, Barbell Row 3x10, Face Pulls 3x12, Bicep Curls 3x12", duration: 60, time: "18:00" },
   Woensdag: { type: "Legs", exercises: "Squat 4x8, Romanian Deadlift 3x10, Leg Press 3x12, Calf Raises 4x15, Walking Lunges 3x12", duration: 60, time: "18:00" },
@@ -34,3 +45,65 @@ export const SPORT_CALORIES = [
 ];
 
 export const CLAUDE_MODEL = "claude-sonnet-4-20250514";
+
+// ====== Onboarding option lists ======
+
+export const SPORTS: string[] = [
+  "Krachttraining",
+  "Padel",
+  "Tennis",
+  "Hardlopen",
+  "Fietsen",
+  "Zwemmen",
+  "Voetbal",
+  "Boksen",
+  "CrossFit",
+  "Yoga / Pilates",
+  "Wandelen",
+  "Klimmen",
+];
+
+export const COMMON_INTOLERANCES: string[] = [
+  "Lactose",
+  "Gluten",
+  "Noten",
+  "Schaaldieren",
+  "Eieren",
+  "Soja",
+];
+
+export const EXPERIENCE_LEVELS: { value: ExperienceLevel; label: string; desc: string }[] = [
+  { value: "beginner", label: "Beginner", desc: "<1 jaar consistent trainen" },
+  { value: "intermediate", label: "Intermediate", desc: "1-3 jaar consistent trainen" },
+  { value: "advanced", label: "Advanced", desc: "3+ jaar consistent trainen" },
+];
+
+export const DIET_STYLES: { value: DietStyle; label: string }[] = [
+  { value: "omnivore", label: "Omnivoor (alles)" },
+  { value: "vegetarian", label: "Vegetarisch" },
+  { value: "vegan", label: "Vegan" },
+  { value: "pescatarian", label: "Pescatarisch (vis ja, vlees nee)" },
+  { value: "keto", label: "Keto / low-carb" },
+  { value: "other", label: "Anders" },
+];
+
+export const COOKING_FREQS: { value: CookingFreq; label: string }[] = [
+  { value: "rarely", label: "Zelden — meestal afhalen / kant-en-klaar" },
+  { value: "sometimes", label: "Soms — 2-3x per week" },
+  { value: "often", label: "Vaak — 4-5x per week" },
+  { value: "almost_always", label: "Bijna altijd zelf koken" },
+];
+
+export const WORK_TYPES: { value: WorkType; label: string }[] = [
+  { value: "sedentary", label: "Zittend (kantoor, <4000 stappen)" },
+  { value: "mixed", label: "Gemengd (deels staan/lopen)" },
+  { value: "active", label: "Actief (op de been, bouw/zorg)" },
+  { value: "very_active", label: "Zeer actief (zware fysieke arbeid)" },
+];
+
+export const COACH_STYLES: { value: CoachStyle; label: string; desc: string }[] = [
+  { value: "strict", label: "Streng", desc: "Direct, no-nonsense, harde feedback" },
+  { value: "motivating", label: "Motiverend", desc: "Pushen, hyped, positief" },
+  { value: "educational", label: "Educatief", desc: "Uitleg + waarom, leert je principes" },
+  { value: "chill", label: "Chill", desc: "Relaxt, geduldig, sustainable focus" },
+];

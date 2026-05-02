@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/client";
 import type { DailyLog, Profile, ScheduleEntry, ChatMessage } from "./types";
 import { DEFAULT_SCHEDULE, DAYS } from "./constants";
 
+const PROFILE_COLUMNS =
+  "user_id, name, height, start_weight, current_weight, target_weight, age, gender, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style, encrypted_anthropic_key, onboarded, created_at, updated_at";
+
 export async function getProfile(): Promise<Profile | null> {
   const supabase = createClient();
   const { data: auth } = await supabase.auth.getUser();
@@ -11,9 +14,7 @@ export async function getProfile(): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select(
-      "user_id, name, height, start_weight, current_weight, target_weight, age, gender, goal, training_days, sleep_hours, stress_level, notes, encrypted_anthropic_key, onboarded, created_at, updated_at",
-    )
+    .select(PROFILE_COLUMNS)
     .eq("user_id", auth.user.id)
     .single();
 
@@ -24,7 +25,7 @@ export async function getProfile(): Promise<Profile | null> {
   if (!data) return null;
   return {
     ...data,
-    has_anthropic_key: !!data.encrypted_anthropic_key,
+    has_anthropic_key: !!(data as any).encrypted_anthropic_key,
   } as unknown as Profile;
 }
 
@@ -33,8 +34,8 @@ export async function updateProfile(patch: Partial<Profile>) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new Error("Not signed in");
 
-  // Strip non-column fields
-  const { has_anthropic_key, user_id, created_at, updated_at, ...payload } = patch as any;
+  const { has_anthropic_key, user_id, created_at, updated_at, ...payload } =
+    patch as any;
 
   const { error } = await supabase
     .from("profiles")
@@ -68,9 +69,7 @@ export async function upsertLog(log: DailyLog) {
 
 export async function listSchedule(): Promise<Record<string, ScheduleEntry>> {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("training_schedule")
-    .select("*");
+  const { data, error } = await supabase.from("training_schedule").select("*");
   if (error) throw error;
 
   const map: Record<string, ScheduleEntry> = {};
@@ -78,7 +77,6 @@ export async function listSchedule(): Promise<Record<string, ScheduleEntry>> {
     map[entry.day] = entry as ScheduleEntry;
   });
 
-  // Backfill missing days from default
   for (const day of DAYS) {
     if (!map[day]) {
       map[day] = {
@@ -97,19 +95,17 @@ export async function upsertScheduleDay(entry: ScheduleEntry) {
   const supabase = createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new Error("Not signed in");
-  const { error } = await supabase
-    .from("training_schedule")
-    .upsert(
-      {
-        user_id: auth.user.id,
-        day: entry.day,
-        type: entry.type,
-        exercises: entry.exercises,
-        duration: entry.duration,
-        time: entry.time,
-      },
-      { onConflict: "user_id,day" },
-    );
+  const { error } = await supabase.from("training_schedule").upsert(
+    {
+      user_id: auth.user.id,
+      day: entry.day,
+      type: entry.type,
+      exercises: entry.exercises,
+      duration: entry.duration,
+      time: entry.time,
+    },
+    { onConflict: "user_id,day" },
+  );
   if (error) throw error;
 }
 

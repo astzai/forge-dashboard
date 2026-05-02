@@ -5,9 +5,19 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
+        sans: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
+        ],
         mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
-        display: ['Syne', "ui-sans-serif", "sans-serif"],
-        sans: ['Inter', "ui-sans-serif", "system-ui"],
+      },
+      letterSpacing: {
+        tightest: "-0.04em",
       },
     },
   },

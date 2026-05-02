@@ -1,3 +1,15 @@
+export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
+export type DietStyle =
+  | "omnivore"
+  | "vegetarian"
+  | "vegan"
+  | "pescatarian"
+  | "keto"
+  | "other";
+export type CookingFreq = "rarely" | "sometimes" | "often" | "almost_always";
+export type WorkType = "sedentary" | "mixed" | "active" | "very_active";
+export type CoachStyle = "strict" | "motivating" | "educational" | "chill";
+
 export type Profile = {
   user_id: string;
   name: string;
@@ -12,7 +24,22 @@ export type Profile = {
   sleep_hours: number;
   stress_level: string;
   notes: string;
+
+  // New extended fields (all optional / sane defaults)
+  body_fat_pct: number | null;
+  waist_cm: number | null;
+  target_weeks: number | null;
+  experience_level: ExperienceLevel;
+  preferred_sports: string[];
+  diet_style: DietStyle;
+  intolerances: string[];
+  cooking_freq: CookingFreq;
+  drinks: string;
+  work_type: WorkType;
+  coach_style: CoachStyle;
+
   has_anthropic_key: boolean;
+  onboarded?: boolean;
   created_at?: string;
   updated_at?: string;
 };
