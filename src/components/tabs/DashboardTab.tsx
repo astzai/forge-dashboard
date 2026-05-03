@@ -73,8 +73,9 @@ export function DashboardTab({
   return (
     <div className="space-y-5 md:space-y-6">
       {/* HERO BANNER */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-stone-900 via-stone-950 to-stone-950 border border-white/10 p-6 md:p-10 bg-grid">
-        <div className="absolute inset-0 bg-glow pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-stone-900 via-stone-950 to-stone-950 border border-white/10 p-6 md:p-10">
+        <div className="absolute inset-0 bg-grid pointer-events-none opacity-40" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 blur-[100px] rounded-full pointer-events-none" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 pulse-soft" />
@@ -86,13 +87,13 @@ export function DashboardTab({
               })}
             </span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tightest leading-[1.05] mb-3 max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tightest leading-[1.05] mb-3 max-w-2xl text-stone-50">
             {todaySchedule?.duration === 0
               ? "Recovery Day"
               : todaySchedule?.type || "Train hard"}
           </h1>
           {todaySchedule?.exercises && todaySchedule.duration > 0 && (
-            <p className="text-stone-400 leading-relaxed mb-5 max-w-2xl">
+            <p className="text-stone-300 leading-relaxed mb-5 max-w-2xl">
               {todaySchedule.exercises}
             </p>
           )}
@@ -105,7 +106,7 @@ export function DashboardTab({
             </button>
             <button
               onClick={() => setActiveTab("chat")}
-              className="px-5 py-2.5 text-sm font-medium border border-white/10 rounded-md hover:border-white/20 text-stone-200 transition-colors flex items-center gap-2"
+              className="px-5 py-2.5 text-sm font-medium border border-white/15 rounded-md hover:border-white/30 text-stone-100 transition-colors flex items-center gap-2"
             >
               <MessageSquare size={15} /> Vraag coach
             </button>
