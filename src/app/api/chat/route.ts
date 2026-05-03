@@ -26,21 +26,30 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    const [{ data: profile }, { data: logs }] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select(
-          "name, height, start_weight, current_weight, target_weight, age, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style, training_goal, split_preference, training_day_names, session_minutes, time_of_day, focus_areas, cardio_preference, equipment, injuries, injury_notes, hated_exercises, current_prs, other_activities",
-        )
-        .eq("user_id", user.id)
-        .single(),
-      supabase
-        .from("daily_logs")
-        .select("date, weight, steps, sport, calories, protein")
-        .eq("user_id", user.id)
-        .order("date", { ascending: true })
-        .limit(14),
-    ]);
+    const [{ data: profile }, { data: logs }, { data: reports }] =
+      await Promise.all([
+        supabase
+          .from("profiles")
+          .select(
+            "name, height, start_weight, current_weight, target_weight, age, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style, training_goal, split_preference, training_day_names, session_minutes, time_of_day, focus_areas, cardio_preference, equipment, injuries, injury_notes, hated_exercises, current_prs, other_activities",
+          )
+          .eq("user_id", user.id)
+          .single(),
+        supabase
+          .from("daily_logs")
+          .select(
+            "date, weight, steps, sport, sport_duration, food, calories, protein, carbs, fat, feedback",
+          )
+          .eq("user_id", user.id)
+          .order("date", { ascending: false })
+          .limit(30),
+        supabase
+          .from("weekly_reports")
+          .select("week_start, report")
+          .eq("user_id", user.id)
+          .order("week_start", { ascending: false })
+          .limit(4),
+      ]);
 
     if (!profile) {
       return NextResponse.json(
@@ -49,7 +58,11 @@ export async function POST(req: Request) {
       );
     }
 
-    const system = buildSystemPrompt(profile as any, (logs as any) ?? []);
+    const system = buildSystemPrompt(
+      profile as any,
+      (logs as any) ?? [],
+      (reports as any) ?? [],
+    );
 
     const response = await client.messages.create({
       model: CLAUDE_MODEL,

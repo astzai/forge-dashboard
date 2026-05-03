@@ -40,32 +40,54 @@ export async function POST(req: Request) {
 
     const { client, usedManaged } = await getUserAnthropic();
 
-    const [{ data: profile }, { data: logs }, { data: latestPhotoAssessment }] =
-      await Promise.all([
-        supabase
-          .from("profiles")
-          .select(
-            "name, height, start_weight, current_weight, target_weight, age, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style, training_goal, split_preference, training_day_names, session_minutes, time_of_day, focus_areas, cardio_preference, equipment, injuries, injury_notes, hated_exercises, current_prs, other_activities",
-          )
-          .eq("user_id", user.id)
-          .single(),
-        supabase
-          .from("daily_logs")
-          .select("date, weight, steps, sport, sport_duration, calories, protein, carbs, fat")
-          .eq("user_id", user.id)
-          .gte("date", weekStart)
-          .lte("date", weekEnd)
-          .order("date", { ascending: true }),
-        supabase
-          .from("photo_assessments")
-          .select("check_in_date, assessment")
-          .eq("user_id", user.id)
-          .gte("check_in_date", weekStart)
-          .lte("check_in_date", weekEnd)
-          .order("check_in_date", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
+    const [
+      { data: profile },
+      { data: logs },
+      { data: latestPhotoAssessment },
+      { data: priorReports },
+      { data: contextLogs },
+    ] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select(
+          "name, height, start_weight, current_weight, target_weight, age, goal, training_days, sleep_hours, stress_level, notes, body_fat_pct, waist_cm, target_weeks, experience_level, preferred_sports, diet_style, intolerances, cooking_freq, drinks, work_type, coach_style, training_goal, split_preference, training_day_names, session_minutes, time_of_day, focus_areas, cardio_preference, equipment, injuries, injury_notes, hated_exercises, current_prs, other_activities",
+        )
+        .eq("user_id", user.id)
+        .single(),
+      supabase
+        .from("daily_logs")
+        .select(
+          "date, weight, steps, sport, sport_duration, food, calories, protein, carbs, fat, feedback",
+        )
+        .eq("user_id", user.id)
+        .gte("date", weekStart)
+        .lte("date", weekEnd)
+        .order("date", { ascending: true }),
+      supabase
+        .from("photo_assessments")
+        .select("check_in_date, assessment")
+        .eq("user_id", user.id)
+        .gte("check_in_date", weekStart)
+        .lte("check_in_date", weekEnd)
+        .order("check_in_date", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("weekly_reports")
+        .select("week_start, report")
+        .eq("user_id", user.id)
+        .lt("week_start", weekStart)
+        .order("week_start", { ascending: false })
+        .limit(4),
+      supabase
+        .from("daily_logs")
+        .select(
+          "date, weight, steps, sport, sport_duration, food, calories, protein, carbs, fat, feedback",
+        )
+        .eq("user_id", user.id)
+        .order("date", { ascending: false })
+        .limit(30),
+    ]);
 
     if (!profile) {
       return NextResponse.json(
@@ -133,7 +155,11 @@ Antwoord ALLEEN met geldig JSON:
     const response = await client.messages.create({
       model: CLAUDE_MODEL,
       max_tokens: 1024,
-      system: buildSystemPrompt(profile as any, (logs as any) ?? []),
+      system: buildSystemPrompt(
+        profile as any,
+        (contextLogs as any) ?? (logs as any) ?? [],
+        (priorReports as any) ?? [],
+      ),
       messages: [{ role: "user", content: userMsg }],
     });
 
