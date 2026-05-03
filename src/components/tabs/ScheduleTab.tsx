@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Edit2, X } from "lucide-react";
-import { upsertScheduleDay } from "@/lib/db";
+import { Check, Edit2, Sparkles, X } from "lucide-react";
+import { listSchedule, upsertScheduleDay } from "@/lib/db";
 import type { ScheduleEntry } from "@/lib/types";
 
 export function ScheduleTab({
@@ -15,8 +15,42 @@ export function ScheduleTab({
   const [editDay, setEditDay] = useState<string | null>(null);
   const [editData, setEditData] = useState<ScheduleEntry | null>(null);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [genMessage, setGenMessage] = useState<string | null>(null);
 
   const days = Object.keys(schedule);
+
+  const regenerate = async () => {
+    if (
+      !confirm(
+        "AI maakt een nieuw 7-daags schema op basis van je profiel. Je huidige schema wordt overschreven. Doorgaan?",
+      )
+    ) {
+      return;
+    }
+    setGenerating(true);
+    setGenMessage(null);
+    try {
+      const res = await fetch("/api/generate-schedule", { method: "POST" });
+      const json = await res.json();
+      if (!res.ok) {
+        setGenMessage(`Fout: ${json.error || "onbekend"}`);
+      } else {
+        // Herlaad het schema
+        const fresh = await listSchedule();
+        onChange(fresh);
+        setGenMessage(
+          json.rationale
+            ? `Nieuw schema klaar. ${json.rationale}`
+            : "Nieuw schema klaar.",
+        );
+      }
+    } catch (err: any) {
+      setGenMessage(`Fout: ${err.message}`);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const startEdit = (day: string) => {
     setEditDay(day);
@@ -39,6 +73,48 @@ export function ScheduleTab({
 
   return (
     <div className="space-y-6">
+      {/* AI generate-CTA bovenaan */}
+      <div className="card p-5 md:p-6 relative overflow-hidden bg-gradient-to-br from-amber-500/8 via-orange-500/4 to-transparent border-amber-500/20">
+        <div className="flex items-start gap-4">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 flex-shrink-0">
+            <Sparkles size={18} className="text-stone-950" strokeWidth={2.5} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h3 className="text-base font-bold text-stone-100">
+                  AI-gegenereerd schema
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Gebaseerd op je doel, ervaring, dagen, blessures &amp;
+                  voorkeuren
+                </p>
+              </div>
+              <button
+                onClick={regenerate}
+                disabled={generating}
+                className="btn-primary text-xs flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50"
+              >
+                {generating ? (
+                  <>
+                    <Sparkles size={13} className="animate-pulse" /> Bouwen...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={13} /> Genereer opnieuw
+                  </>
+                )}
+              </button>
+            </div>
+            {genMessage && (
+              <p className="text-xs text-amber-300 mt-3 leading-relaxed">
+                {genMessage}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="border border-stone-800 bg-stone-950 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xs uppercase tracking-[0.2em] text-stone-500 font-mono">

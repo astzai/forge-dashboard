@@ -12,7 +12,13 @@ export class NoApiKeyError extends Error {
   }
 }
 
-export type CallType = "chat" | "photo" | "daily" | "weekly" | "food";
+export type CallType =
+  | "chat"
+  | "photo"
+  | "daily"
+  | "weekly"
+  | "food"
+  | "schedule";
 
 /**
  * Returns an Anthropic SDK client.

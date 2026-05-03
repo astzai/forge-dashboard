@@ -10,6 +10,40 @@ export type CookingFreq = "rarely" | "sometimes" | "often" | "almost_always";
 export type WorkType = "sedentary" | "mixed" | "active" | "very_active";
 export type CoachStyle = "strict" | "motivating" | "educational" | "chill";
 
+// Training-specifieke types
+export type TrainingGoal =
+  | "muscle_gain"
+  | "strength"
+  | "fatloss_keep_muscle"
+  | "sport_performance"
+  | "general_fitness";
+export type SplitPreference =
+  | "ppl"
+  | "upper_lower"
+  | "full_body"
+  | "bro_split"
+  | "no_preference";
+export type TimeOfDay = "morning" | "afternoon" | "evening" | "flexible";
+export type CardioPreference =
+  | "hiit"
+  | "zone2"
+  | "steady"
+  | "minimal"
+  | "sport_is_cardio"
+  | "mixed";
+export type Equipment =
+  | "full_gym"
+  | "home_gym"
+  | "dumbbells_only"
+  | "bodyweight"
+  | "outdoor";
+export type CurrentPRs = {
+  bench?: number | null;
+  squat?: number | null;
+  deadlift?: number | null;
+  unknown?: boolean;
+};
+
 export type Profile = {
   user_id: string;
   name: string;
@@ -37,6 +71,21 @@ export type Profile = {
   drinks: string;
   work_type: WorkType;
   coach_style: CoachStyle;
+
+  // Trainings-detail (uitgebreid voor AI schema-generatie)
+  training_goal: TrainingGoal;
+  split_preference: SplitPreference;
+  training_day_names: string[];
+  session_minutes: number;
+  time_of_day: TimeOfDay;
+  focus_areas: string[];
+  cardio_preference: CardioPreference;
+  equipment: Equipment;
+  injuries: string[];
+  injury_notes: string;
+  hated_exercises: string;
+  current_prs: CurrentPRs;
+  other_activities: string;
 
   has_anthropic_key: boolean;
   onboarded?: boolean;

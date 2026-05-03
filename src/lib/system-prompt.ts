@@ -70,6 +70,21 @@ export function buildSystemPrompt(profile: Profile, recentLogs: DailyLog[]) {
     .filter(Boolean)
     .join(", ");
 
+  // Trainingsdetails (kunnen ontbreken bij oudere profielen)
+  const focusList = profile.focus_areas?.length
+    ? profile.focus_areas.join(", ")
+    : "geen specifieke focus";
+  const injuryList = profile.injuries?.length
+    ? profile.injuries.join(", ")
+    : "geen";
+  const trainingDayList = profile.training_day_names?.length
+    ? profile.training_day_names.join(", ")
+    : `${profile.training_days}x/week (dagen niet gespecificeerd)`;
+  const prs = profile.current_prs ?? {};
+  const prsLine = prs.unknown
+    ? "PR's onbekend"
+    : `bench ${prs.bench ?? "?"} / squat ${prs.squat ?? "?"} / deadlift ${prs.deadlift ?? "?"} kg`;
+
   return `Je bent een persoonlijke fitness coach voor ${profile.name}. Antwoord ALTIJD in het Nederlands. Hou antwoorden kort en concreet (max 6-8 zinnen tenzij het echt moet).
 
 ${tone}
@@ -79,18 +94,32 @@ PROFIEL:
 - ${timelineLine}
 ${bodyLine ? `- Lichaam: ${bodyLine}` : ""}
 - Hoofddoel: ${profile.goal}
-- Ervaring: ${profile.experience_level}
-- Trainingsfrequentie: ${profile.training_days}x/week
-- Voorkeur sporten: ${sportsList}
 - Werk: ${fmtWorkType(profile)}
 - Slaap: ${profile.sleep_hours}u gemiddeld, stress: ${profile.stress_level}
-- Voeding: ${fmtDietStyle(profile)}, ${fmtCookingFreq(profile)}
+
+TRAINING:
+- Ervaring: ${profile.experience_level}
+- Training-doel: ${profile.training_goal ?? "niet gespecificeerd"}
+- Voorkeurs-split: ${profile.split_preference ?? "geen voorkeur"}
+- Sporten: ${sportsList}
+- Focuspunten: ${focusList}
+- Cardio: ${profile.cardio_preference ?? "—"}
+- Equipment: ${profile.equipment ?? "—"}
+- Trainingsdagen: ${trainingDayList}, ${profile.session_minutes ?? 60} min per sessie, voorkeur ${profile.time_of_day ?? "flexibel"}
+- Blessures: ${injuryList}${profile.injury_notes ? ` (${profile.injury_notes})` : ""}
+- Haat: ${profile.hated_exercises || "—"}
+- Huidige PR's: ${prsLine}
+- Andere activiteiten: ${profile.other_activities || "—"}
+
+VOEDING:
+- ${fmtDietStyle(profile)}, ${fmtCookingFreq(profile)}
 - Intoleranties: ${intolerancesList}
 - Drinkt: ${profile.drinks || "niet gespecificeerd"}
-- Notes: ${profile.notes}
+
+EXTRA NOTES: ${profile.notes}
 
 LAATSTE 7 DAGEN LOGS:
 ${recentSummary || "Nog geen logs."}
 
-Geef altijd advies dat past bij dit profiel en deze data. Wees concreet met getallen. Houd rekening met dieet/intoleranties bij voedingstips.`;
+Geef altijd advies dat past bij dit profiel en deze data. Wees concreet met getallen. Houd rekening met dieet/intoleranties bij voedingstips. Vermijd oefeningen die de athlete haat of die conflicteren met blessures.`;
 }

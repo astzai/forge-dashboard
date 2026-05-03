@@ -1,8 +1,13 @@
 import type {
+  CardioPreference,
   CoachStyle,
   CookingFreq,
   DietStyle,
+  Equipment,
   ExperienceLevel,
+  SplitPreference,
+  TimeOfDay,
+  TrainingGoal,
   WorkType,
 } from "./types";
 
@@ -106,4 +111,81 @@ export const COACH_STYLES: { value: CoachStyle; label: string; desc: string }[] 
   { value: "motivating", label: "Motiverend", desc: "Pushen, hyped, positief" },
   { value: "educational", label: "Educatief", desc: "Uitleg + waarom, leert je principes" },
   { value: "chill", label: "Chill", desc: "Relaxt, geduldig, sustainable focus" },
+];
+
+// ====== Training-detail option lists ======
+
+export const TRAINING_GOALS: { value: TrainingGoal; label: string; desc: string }[] = [
+  { value: "muscle_gain", label: "Spiermassa opbouwen", desc: "Hypertrofie, volume-gericht" },
+  { value: "strength", label: "Krachtopbouw", desc: "Zware compound lifts, lage reps" },
+  { value: "fatloss_keep_muscle", label: "Vetverlies + spier behouden", desc: "Recomp, behoud kracht" },
+  { value: "sport_performance", label: "Sport-specifiek presteren", desc: "Padel, hardlopen, etc. ondersteunen" },
+  { value: "general_fitness", label: "Algemene fitheid", desc: "Gezond, sterk, in balans" },
+];
+
+export const SPLIT_PREFERENCES: { value: SplitPreference; label: string; desc: string }[] = [
+  { value: "ppl", label: "Push / Pull / Legs", desc: "Klassieke 6-daagse split, of 3x/week" },
+  { value: "upper_lower", label: "Upper / Lower", desc: "4x/week, bovenlijf/onderlijf wisselen" },
+  { value: "full_body", label: "Full body", desc: "2-4x/week, hele lichaam per sessie" },
+  { value: "bro_split", label: "Bro split", desc: "1 spiergroep per dag, 5-6x/week" },
+  { value: "no_preference", label: "Geen voorkeur", desc: "Coach kiest wat past bij jouw doel" },
+];
+
+export const TIMES_OF_DAY: { value: TimeOfDay; label: string }[] = [
+  { value: "morning", label: "Ochtend" },
+  { value: "afternoon", label: "Middag" },
+  { value: "evening", label: "Avond" },
+  { value: "flexible", label: "Wisselend / flexibel" },
+];
+
+export const FOCUS_AREAS: string[] = [
+  "Borst",
+  "Rug",
+  "Schouders",
+  "Armen",
+  "Benen",
+  "Glutes",
+  "Core",
+  "Conditie",
+  "Mobiliteit",
+  "Explosiviteit",
+];
+
+export const CARDIO_PREFERENCES: { value: CardioPreference; label: string; desc: string }[] = [
+  { value: "hiit", label: "HIIT", desc: "Korte intervallen, max effort" },
+  { value: "zone2", label: "Zone 2", desc: "Lange rustige cardio (60-70% max HR)" },
+  { value: "steady", label: "Steady state", desc: "Matige intensiteit, 30-45 min" },
+  { value: "minimal", label: "Liefst minimaal", desc: "Alleen wat moet voor gezondheid" },
+  { value: "sport_is_cardio", label: "Mijn sport is mijn cardio", desc: "Padel/voetbal/etc telt" },
+  { value: "mixed", label: "Mix", desc: "Wisselen per week" },
+];
+
+export const EQUIPMENTS: { value: Equipment; label: string; desc: string }[] = [
+  { value: "full_gym", label: "Volledige sportschool", desc: "Alle machines + free weights" },
+  { value: "home_gym", label: "Home gym", desc: "Rack, barbell, dumbbells, bench" },
+  { value: "dumbbells_only", label: "Alleen dumbbells", desc: "Een setje thuis" },
+  { value: "bodyweight", label: "Bodyweight", desc: "Geen materiaal" },
+  { value: "outdoor", label: "Outdoor / park", desc: "Hardlopen, calisthenics, etc." },
+];
+
+export const COMMON_INJURIES: string[] = [
+  "Lage rug",
+  "Knie",
+  "Schouder",
+  "Pols",
+  "Elleboog",
+  "Hamstring",
+  "Nek",
+  "Heup",
+  "Enkel",
+];
+
+export const WEEKDAYS: string[] = [
+  "Maandag",
+  "Dinsdag",
+  "Woensdag",
+  "Donderdag",
+  "Vrijdag",
+  "Zaterdag",
+  "Zondag",
 ];
