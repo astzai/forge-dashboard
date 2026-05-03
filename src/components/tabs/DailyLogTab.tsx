@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, Sparkles } from "lucide-react";
 import { upsertLog } from "@/lib/db";
 import { NoApiKeyBanner } from "@/components/NoApiKeyBanner";
+import { AgendaTab } from "@/components/tabs/AgendaTab";
 import type { DailyLog, Feedback, Profile } from "@/lib/types";
 
 export function DailyLogTab({
@@ -346,6 +347,15 @@ export function DailyLogTab({
       </div>
 
       {feedback && <FeedbackCard feedback={feedback as any} />}
+
+      {/* Agenda — geschiedenis van eerdere logs */}
+      <div className="pt-8 border-t border-white/5">
+        <h3 className="text-lg font-bold tracking-tight mb-1">Geschiedenis</h3>
+        <p className="text-sm text-stone-500 mb-4">
+          Alle eerdere logs. Klik om uit te klappen.
+        </p>
+        <AgendaTab logs={logs} />
+      </div>
     </div>
   );
 }

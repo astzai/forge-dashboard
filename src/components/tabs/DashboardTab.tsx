@@ -13,8 +13,10 @@ import {
   Activity,
   ClipboardCheck,
   Dumbbell,
+  FileText,
   Flame,
   MessageSquare,
+  Sparkles,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
@@ -35,9 +37,20 @@ export function DashboardTab({
   const today = new Date().toISOString().split("T")[0];
   const todayLog = logs.find((l) => l.date === today);
   const lastLog = [...logs].sort((a, b) => b.date.localeCompare(a.date))[0];
-  const dayName = new Date().toLocaleDateString("nl-NL", { weekday: "long" });
+  const todayDate = new Date();
+  const dayName = todayDate.toLocaleDateString("nl-NL", { weekday: "long" });
   const dayKey = dayName.charAt(0).toUpperCase() + dayName.slice(1);
   const todaySchedule = schedule[dayKey];
+
+  // Week-analyse CTA: alleen op Zaterdag (6), Zondag (0), Maandag (1)
+  const dayNum = todayDate.getDay();
+  const showWeekCta = dayNum === 0 || dayNum === 1 || dayNum === 6;
+  const weekCtaCopy =
+    dayNum === 6
+      ? "Het weekend is begonnen — tijd om je week te reviewen"
+      : dayNum === 0
+        ? "Zondag — perfecte dag voor je week-analyse"
+        : "Maandag — review je vorige week voor een sterke start";
 
   const denom = profile.start_weight - profile.target_weight || 1;
   const progressPct = Math.min(
@@ -99,6 +112,38 @@ export function DashboardTab({
           </div>
         </div>
       </div>
+
+      {/* WEEK ANALYSE CTA — alleen Za/Zo/Ma */}
+      {showWeekCta && (
+        <button
+          onClick={() => setActiveTab("week")}
+          className="w-full text-left card p-5 md:p-6 relative overflow-hidden card-hover bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border-amber-500/30 group"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full" />
+          <div className="relative flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 flex-shrink-0">
+              <Sparkles size={20} className="text-stone-950" strokeWidth={2.5} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-xs uppercase tracking-wider text-amber-300 font-semibold">
+                  Week analyse
+                </span>
+                <span className="w-1 h-1 rounded-full bg-amber-400 pulse-soft" />
+              </div>
+              <h3 className="text-base md:text-lg font-bold text-stone-100 leading-tight">
+                {weekCtaCopy}
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                Klik om je AI-rapport van de afgelopen week te genereren
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-amber-300 text-sm font-medium opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0">
+              <FileText size={14} /> Open
+            </div>
+          </div>
+        </button>
+      )}
 
       {/* HERO METRICS — big number + progress */}
       <div className="grid md:grid-cols-3 gap-4">

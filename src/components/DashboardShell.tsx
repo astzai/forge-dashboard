@@ -5,11 +5,9 @@ import Link from "next/link";
 import {
   Activity,
   Calculator,
-  Calendar,
   ClipboardCheck,
   Dumbbell,
   FileText,
-  Flame,
   MessageSquare,
   Settings,
   Shield,
@@ -23,9 +21,7 @@ import { DailyLogTab } from "@/components/tabs/DailyLogTab";
 import { WeightTab } from "@/components/tabs/WeightTab";
 import { ChatTab } from "@/components/tabs/ChatTab";
 import { ScheduleTab } from "@/components/tabs/ScheduleTab";
-import { AgendaTab } from "@/components/tabs/AgendaTab";
-import { CalculatorTab } from "@/components/tabs/CalculatorTab";
-import { SportBurnTab } from "@/components/tabs/SportBurnTab";
+import { CalorieenTab } from "@/components/tabs/CalorieenTab";
 import { WeekTab } from "@/components/tabs/WeekTab";
 import { AdminTab } from "@/components/tabs/AdminTab";
 import { isOwnerUser } from "@/lib/content";
@@ -44,9 +40,7 @@ const ALL_TABS: NavItem[] = [
   { id: "weight", label: "Gewicht", icon: TrendingDown },
   { id: "chat", label: "Coach", icon: MessageSquare },
   { id: "schedule", label: "Schema", icon: Dumbbell },
-  { id: "agenda", label: "Agenda", icon: Calendar },
-  { id: "calculator", label: "Calorieën", icon: Calculator },
-  { id: "sports", label: "Sport burn", icon: Flame },
+  { id: "calorieen", label: "Calorieën", icon: Calculator },
 ];
 
 const ADMIN_TAB: NavItem = { id: "admin", label: "Admin", icon: Shield };
@@ -199,9 +193,7 @@ export function DashboardShell() {
         {activeTab === "schedule" && (
           <ScheduleTab schedule={schedule} onChange={setSchedule} />
         )}
-        {activeTab === "agenda" && <AgendaTab logs={logs} />}
-        {activeTab === "calculator" && <CalculatorTab profile={profile} />}
-        {activeTab === "sports" && <SportBurnTab profile={profile} />}
+        {activeTab === "calorieen" && <CalorieenTab profile={profile} />}
         {activeTab === "admin" && isOwner && <AdminTab />}
       </main>
 
