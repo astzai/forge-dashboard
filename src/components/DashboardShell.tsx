@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
-  Calculator,
+  ChefHat,
   ClipboardCheck,
   Dumbbell,
   FileText,
@@ -21,7 +21,7 @@ import { DailyLogTab } from "@/components/tabs/DailyLogTab";
 import { WeightTab } from "@/components/tabs/WeightTab";
 import { ChatTab } from "@/components/tabs/ChatTab";
 import { ScheduleTab } from "@/components/tabs/ScheduleTab";
-import { CalorieenTab } from "@/components/tabs/CalorieenTab";
+import { VoedingTab } from "@/components/tabs/VoedingTab";
 import { WeekTab } from "@/components/tabs/WeekTab";
 import { AdminTab } from "@/components/tabs/AdminTab";
 import { isOwnerUser } from "@/lib/content";
@@ -40,7 +40,7 @@ const ALL_TABS: NavItem[] = [
   { id: "weight", label: "Gewicht", icon: TrendingDown },
   { id: "chat", label: "Coach", icon: MessageSquare },
   { id: "schedule", label: "Schema", icon: Dumbbell },
-  { id: "calorieen", label: "Calorieën", icon: Calculator },
+  { id: "voeding", label: "Voeding", icon: ChefHat },
 ];
 
 const ADMIN_TAB: NavItem = { id: "admin", label: "Admin", icon: Shield };
@@ -193,7 +193,7 @@ export function DashboardShell() {
         {activeTab === "schedule" && (
           <ScheduleTab schedule={schedule} onChange={setSchedule} />
         )}
-        {activeTab === "calorieen" && <CalorieenTab profile={profile} />}
+        {activeTab === "voeding" && <VoedingTab profile={profile} />}
         {activeTab === "admin" && isOwner && <AdminTab />}
       </main>
 

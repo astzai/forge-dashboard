@@ -18,7 +18,9 @@ export type CallType =
   | "daily"
   | "weekly"
   | "food"
-  | "schedule";
+  | "schedule"
+  | "meal_plan"
+  | "shopping";
 
 /**
  * Returns an Anthropic SDK client.

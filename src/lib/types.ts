@@ -181,6 +181,68 @@ export type RichFeedback = {
   trend_context?: string;
 };
 
+// === Eetschema & boodschappen ===
+
+export type MealMoment = "ontbijt" | "lunch" | "diner" | "snack";
+
+export type Ingredient = {
+  item: string;
+  amount: number;
+  unit: string;
+};
+
+export type Meal = {
+  moment: MealMoment;
+  name: string;
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  ingredients: Ingredient[];
+  prep: string;
+  prep_minutes?: number;
+};
+
+export type DailyTargets = {
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
+
+export type MealPlan = {
+  id?: string;
+  user_id?: string;
+  week_start: string;
+  plan: Record<string, Meal[]>; // key = "Maandag"..."Zondag"
+  daily_targets: DailyTargets;
+  created_at?: string;
+};
+
+export type ShoppingItem = {
+  category: string; // "Groente", "Vlees & vis", "Zuivel", "Droogwaren", "Overig"
+  item: string;
+  amount: number;
+  unit: string;
+  checked?: boolean;
+};
+
+export type PrepBlock = {
+  day: string;
+  meals: string[];
+  minutes: number;
+  note: string;
+};
+
+export type ShoppingList = {
+  id?: string;
+  user_id?: string;
+  week_start: string;
+  items: ShoppingItem[];
+  prep_plan: PrepBlock[];
+  created_at?: string;
+};
+
 export type WeeklyReport = {
   id?: string;
   user_id?: string;
