@@ -6,13 +6,13 @@ import {
   Activity,
   Calculator,
   Calendar,
-  Camera,
   ClipboardCheck,
   Dumbbell,
   FileText,
   Flame,
   MessageSquare,
   Settings,
+  Shield,
   TrendingDown,
   Zap,
 } from "lucide-react";
@@ -26,8 +26,9 @@ import { ScheduleTab } from "@/components/tabs/ScheduleTab";
 import { AgendaTab } from "@/components/tabs/AgendaTab";
 import { CalculatorTab } from "@/components/tabs/CalculatorTab";
 import { SportBurnTab } from "@/components/tabs/SportBurnTab";
-import { PhotosTab } from "@/components/tabs/PhotosTab";
 import { WeekTab } from "@/components/tabs/WeekTab";
+import { AdminTab } from "@/components/tabs/AdminTab";
+import { isOwnerUser } from "@/lib/content";
 import {
   getProfile,
   listLogs,
@@ -39,7 +40,6 @@ import type { DailyLog, Profile, ScheduleEntry } from "@/lib/types";
 const ALL_TABS: NavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: Activity },
   { id: "log", label: "Daglog", icon: ClipboardCheck },
-  { id: "photos", label: "Foto's", icon: Camera },
   { id: "week", label: "Week", icon: FileText },
   { id: "weight", label: "Gewicht", icon: TrendingDown },
   { id: "chat", label: "Coach", icon: MessageSquare },
@@ -49,11 +49,13 @@ const ALL_TABS: NavItem[] = [
   { id: "sports", label: "Sport burn", icon: Flame },
 ];
 
-// Mobile bottom nav: 5 most-used tabs
+const ADMIN_TAB: NavItem = { id: "admin", label: "Admin", icon: Shield };
+
+// Mobile bottom nav: 4 most-used tabs (+ Meer button = 5 slots)
 const PRIMARY_MOBILE: NavItem[] = [
   ALL_TABS.find((t) => t.id === "dashboard")!,
   ALL_TABS.find((t) => t.id === "log")!,
-  ALL_TABS.find((t) => t.id === "photos")!,
+  ALL_TABS.find((t) => t.id === "week")!,
   ALL_TABS.find((t) => t.id === "chat")!,
 ];
 const OVERFLOW_MOBILE: NavItem[] = ALL_TABS.filter(
@@ -66,13 +68,15 @@ export function DashboardShell() {
   const [logs, setLogs] = useState<DailyLog[]>([]);
   const [schedule, setSchedule] = useState<Record<string, ScheduleEntry>>({});
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    Promise.all([getProfile(), listLogs(), listSchedule()])
-      .then(([p, l, s]) => {
+    Promise.all([getProfile(), listLogs(), listSchedule(), isOwnerUser()])
+      .then(([p, l, s, owner]) => {
         setProfile(p);
         setLogs(l);
         setSchedule(s);
+        setIsOwner(owner);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -165,6 +169,14 @@ export function DashboardShell() {
                 label={t.label}
               />
             ))}
+            {isOwner && (
+              <NavTab
+                active={activeTab === ADMIN_TAB.id}
+                onClick={() => setActiveTab(ADMIN_TAB.id)}
+                icon={ADMIN_TAB.icon}
+                label={ADMIN_TAB.label}
+              />
+            )}
           </nav>
         </div>
       </header>
@@ -181,7 +193,6 @@ export function DashboardShell() {
         {activeTab === "log" && (
           <DailyLogTab logs={logs} onSaved={onLogSaved} profile={profile} />
         )}
-        {activeTab === "photos" && <PhotosTab profile={profile} />}
         {activeTab === "week" && <WeekTab profile={profile} />}
         {activeTab === "weight" && <WeightTab logs={logs} profile={profile} />}
         {activeTab === "chat" && <ChatTab profile={profile} />}
@@ -191,6 +202,7 @@ export function DashboardShell() {
         {activeTab === "agenda" && <AgendaTab logs={logs} />}
         {activeTab === "calculator" && <CalculatorTab profile={profile} />}
         {activeTab === "sports" && <SportBurnTab profile={profile} />}
+        {activeTab === "admin" && isOwner && <AdminTab />}
       </main>
 
       <MobileBottomNav

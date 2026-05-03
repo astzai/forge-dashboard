@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Sparkles } from "lucide-react";
 import { upsertLog } from "@/lib/db";
 import { NoApiKeyBanner } from "@/components/NoApiKeyBanner";
 import type { DailyLog, Feedback, Profile } from "@/lib/types";
@@ -36,6 +37,52 @@ export function DailyLogTab({
   const [analyzingFeedback, setAnalyzingFeedback] = useState(false);
   const [needsKey, setNeedsKey] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Food photo recognition (CalAI-style)
+  const [snappingFood, setSnappingFood] = useState(false);
+  const [snapResult, setSnapResult] = useState<null | {
+    description: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    confidence?: string;
+  }>(null);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const onSnapFood = async (file: File) => {
+    setError(null);
+    setSnappingFood(true);
+    setSnapResult(null);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      const res = await fetch("/api/analyze-food-photo", {
+        method: "POST",
+        body: fd,
+      });
+      if (res.status === 402) {
+        setNeedsKey(true);
+        return;
+      }
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || "AI kon foto niet analyseren");
+      }
+      const data = await res.json();
+      setSnapResult(data);
+      // Append AI description to existing food field (or replace if empty)
+      setFood((prev) =>
+        prev.trim()
+          ? `${prev}\n+ ${data.description} (~${data.calories} kcal, ${data.protein}g eiwit)`
+          : `${data.description} (~${data.calories} kcal, ${data.protein}g eiwit)`,
+      );
+    } catch (e: any) {
+      setError(`Foto analyse mislukt: ${e.message}`);
+    } finally {
+      setSnappingFood(false);
+    }
+  };
 
   useEffect(() => {
     const e = logs.find((l) => l.date === date);
@@ -206,13 +253,70 @@ export function DailyLogTab({
             </Field>
           </div>
         </div>
-        <div className="mb-4">
+        <div className="mb-4 space-y-3">
+          {/* Food photo capture (CalAI-style) */}
+          <div className="border border-orange-500/30 bg-orange-500/5 rounded-lg p-4">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-stone-100 flex items-center gap-1.5">
+                  <Sparkles size={13} className="text-orange-400" /> Snap je
+                  maaltijd
+                </h4>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Maak een foto van je eten — AI herkent en schat kcal/macros.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={snappingFood}
+                className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-stone-950 font-medium text-sm px-4 py-2 rounded-md flex items-center gap-1.5 flex-shrink-0"
+              >
+                <Camera size={14} />
+                {snappingFood ? "Analyseren..." : "Foto"}
+              </button>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onSnapFood(f);
+                  e.target.value = "";
+                }}
+              />
+            </div>
+            {snapResult && (
+              <div className="border-t border-orange-500/20 pt-3 mt-3">
+                <p className="text-sm text-stone-100 font-medium mb-2">
+                  {snapResult.description}
+                  {snapResult.confidence && (
+                    <span className="ml-2 text-xs text-stone-500">
+                      ({snapResult.confidence} confidence)
+                    </span>
+                  )}
+                </p>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <MacroBadge label="Kcal" v={snapResult.calories} />
+                  <MacroBadge label="Eiwit" v={snapResult.protein} unit="g" />
+                  <MacroBadge label="Carbs" v={snapResult.carbs} unit="g" />
+                  <MacroBadge label="Vet" v={snapResult.fat} unit="g" />
+                </div>
+                <p className="text-[11px] text-stone-500 mt-2">
+                  ✓ Toegevoegd aan je voedingstekst hieronder. Pas aan als nodig.
+                </p>
+              </div>
+            )}
+          </div>
+
           <Field label="Wat heb je vandaag gegeten? (zo specifiek mogelijk)">
             <textarea
               value={food}
               onChange={(e) => setFood(e.target.value)}
               rows={5}
-              placeholder="Bijv: ontbijt - 4 eieren met 2 sneetjes brood. lunch - kipfilet 200g met rijst 150g. diner - pasta bolognese met 200g rundergehakt. snacks - 1 banaan, 30g amandelen, 2 monster zero"
+              placeholder="Bijv: ontbijt - 4 eieren met 2 sneetjes brood. lunch - kipfilet 200g met rijst 150g. Of klik 'Foto' hierboven om AI te laten analyseren."
               className="w-full bg-stone-900 border border-stone-800 px-3 py-2 text-stone-200 font-mono text-sm focus:outline-none focus:border-orange-500 leading-relaxed"
             />
           </Field>
@@ -335,6 +439,26 @@ function Field({
         {label}
       </label>
       <div className="mt-1">{children}</div>
+    </div>
+  );
+}
+
+function MacroBadge({
+  label,
+  v,
+  unit,
+}: {
+  label: string;
+  v: number;
+  unit?: string;
+}) {
+  return (
+    <div className="bg-stone-900/60 border border-white/5 rounded-md px-2 py-1.5">
+      <div className="text-[10px] text-stone-500">{label}</div>
+      <div className="hero-num text-base text-stone-100">
+        {v}
+        {unit && <span className="text-[10px] text-stone-500 ml-0.5">{unit}</span>}
+      </div>
     </div>
   );
 }
